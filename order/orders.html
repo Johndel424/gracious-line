@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders - Gracious Line Gadgets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/overview.css">
+  <script src="../js/analytics.js"></script>
+  <script>checkDashboardAuth();</script>
+  <style>
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table-responsive table { min-width: 600px; }
+  </style>
+</head>
+<body>
+
+  <div class="container container-wide">
+    <div class="card">
+      
+      <!-- Top Navigation -->
+      <div class="dash-nav">
+        <div class="dash-brand">
+          <img src="img/gracious.jpg" alt="Logo" onerror="this.style.display='none'">
+          <div>
+            <h2 class="brand-title" style="font-size: 1.25rem;">GRACIOUS LINE</h2>
+            <div class="brand-subtitle" style="font-size: 0.65rem;">GADGETS & SALES DASHBOARD</div>
+          </div>
+        </div>
+
+        <div class="user-info">
+          <span class="user-badge">👤 Logged in as: <strong id="userBadgeEmail">Admin</strong></span>
+          <button class="btn-logout" onclick="logout()">LOGOUT</button>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="filter-bar-container">
+        <div>
+          <span class="filter-title">📌 Page: </span>
+          <span style="color: var(--gold-primary); font-weight: 700; font-size: 0.85rem;">Orders</span>
+        </div>
+
+        <div class="time-filter-group">
+          <a href="../overview/overview.html" class="time-filter-btn">Overview</a>
+          <a href="../analytic/analytics.html" class="time-filter-btn">Analytics</a>
+          <a href="orders.html" class="time-filter-btn active">Orders</a>
+        </div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="table-box" style="margin-top: 0;">
+        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Status</th>
+                <th>Total Amount</th>
+              </tr>
+            </thead>
+            <tbody id="allOrdersTableBody">
+              <!-- Dynamically Populated by script.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
