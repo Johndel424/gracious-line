@@ -15,8 +15,8 @@
 </head>
 <body>
 
-  <div class="container container-wide">
-    <div class="card">
+<div class="container container-wide">
+  <div class="card">
       
       <!-- Top Navigation -->
       <div class="dash-nav">
@@ -29,12 +29,12 @@
         </div>
 
         <div class="user-info">
-        <!-- Add Product Button -->
-    <button class="time-filter-btn active" onclick="openAddProductModal()" style="cursor: pointer; font-weight: 700;">
-      ➕ ADD PRODUCT
-    </button>
-          <!-- <span class="user-badge">👤 Logged in as: <strong id="userBadgeEmail">Admin</strong></span> -->
-          <button class="btn-logout" onclick="logout()">LOGOUT</button>
+              <!-- Add Product Button -->
+              <button class="time-filter-btn active" onclick="openAddProductModal()" style="cursor: pointer; font-weight: 700;">
+                ➕ ADD PRODUCT
+              </button>
+              <!-- <span class="user-badge">👤 Logged in as: <strong id="userBadgeEmail">Admin</strong></span> -->
+              <button class="btn-logout" onclick="logout()">LOGOUT</button>
         </div>
       </div>
 
@@ -52,95 +52,149 @@
         </div>
       </div>
 
-      <!-- Stats Cards Grid -->
-      <div class="dash-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Sales Revenue</div>
-          <div id="statTotalSales" class="stat-value">₱342,000</div>
-          <div id="statSalesGrowth" class="stat-badge">+15.2% growth</div>
-        </div>
+    <!-- Stats Cards Grid -->
+    <div class="dash-grid">
+      
+      <!-- CARD 1: Total Sales Revenue (Current Month Profit) -->
+      <div class="stat-card">
+        <div class="stat-label">Current Month Profit</div>
+        <div id="statTotalSales" class="stat-value">₱0</div>
+        <div id="statSalesGrowth" class="stat-badge">+0% vs last month</div>
+      </div>
 
-        <div class="stat-card">
-          <div class="stat-label">Orders Overview</div>
-          <div class="flex-stats">
-            <div>
-              <div style="font-size: 0.7rem; color: var(--text-muted);">New Orders</div>
-              <div id="statNewOrders" style="font-size: 1.4rem; font-weight: 800; color: #fff;">85</div>
-            </div>
-            <div>
-              <div style="font-size: 0.7rem; color: var(--text-muted);">Pending</div>
-              <div id="statPendingOrders" style="font-size: 1.4rem; font-weight: 800; color: var(--gold-primary);">12</div>
-            </div>
+      <!-- CARD 2: Orders / Inventory Overview -->
+      <div class="stat-card">
+        <div class="stat-label">Inventory Overview</div>
+        <div class="flex-stats" style="display: flex; gap: 15px; margin-top: 5px;">
+          <div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Sold (This Month)</div>
+            <div id="statNewOrders" style="font-size: 1.4rem; font-weight: 800; color: #4ade80;">0</div>
+          </div>
+          <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Available Stock</div>
+            <div id="statPendingOrders" style="font-size: 1.4rem; font-weight: 800; color: var(--gold-primary);">0</div>
+          </div>
+        </div>
+    </div>
+
+    <!-- CARD 3: Top Selling & Most Profitable Units -->
+    <div class="stat-card">
+      <div class="stat-label">Performance Highlights</div>
+      <div class="top-product-box" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px;">
+        
+        <!-- Top Volume Item (LEFT) -->
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+          <div style="font-size: 1.1rem;">🔥</div>
+          <div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Top Volume</div>
+            <div id="statTopProduct" style="font-weight: 700; font-size: 0.82rem; color: #fff; line-height: 1.2;">None Yet</div>
+            <div id="statTopProductDetail" style="color: var(--gold-primary); font-size: 0.72rem;">0 units sold</div>
           </div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-label">Top Selling Item</div>
-          <div class="top-product-box">
-            <div class="product-img">📱</div>
-            <div>
-              <div id="statTopProduct" style="font-weight: 700; font-size: 0.9rem; color: #fff;">Model X Phone</div>
-              <div id="statTopProductDetail" style="color: var(--gold-primary); font-size: 0.78rem;">28 units sold • ₱45,000 ea</div>
-            </div>
+        <!-- Vertical Divider Line -->
+        <div style="border-left: 1px dashed rgba(255,255,255,0.15); height: 36px;"></div>
+
+        <!-- Most Profitable Item (RIGHT) -->
+        <div style="display: flex; align-items: center; gap: 8px; flex: 1; padding-left: 6px;">
+          <div style="font-size: 1.1rem;">💎</div>
+          <div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Most Profitable</div>
+            <div id="statTopProfitProduct" style="font-weight: 700; font-size: 0.82rem; color: #fff; line-height: 1.2;">None Yet</div>
+            <div id="statTopProfitDetail" style="color: #4ade80; font-size: 0.72rem;">₱0 total profit</div>
           </div>
         </div>
+
       </div>
-
-      <!-- SVG Chart -->
-      <div class="chart-box">
-        <div class="chart-header-flex">
-          <h3>SALES PERFORMANCE CHART</h3>
-          <span style="font-size: 0.72rem; color: var(--text-muted);">Interactive Visual Trend</span>
-        </div>
-
-        <svg class="svg-chart" viewBox="0 0 500 160">
-          <defs>
-            <linearGradient id="gold-line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fff0d0" />
-              <stop offset="50%" stop-color="#e2b258" />
-              <stop offset="100%" stop-color="#9e7428" />
-            </linearGradient>
-            <linearGradient id="gold-area-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="rgba(226, 178, 88, 0.25)" />
-              <stop offset="100%" stop-color="rgba(226, 178, 88, 0.0)" />
-            </linearGradient>
-          </defs>
-
-          <line x1="0" y1="30" x2="500" y2="30" stroke="rgba(226,178,88,0.12)" stroke-dasharray="3" />
-          <line x1="0" y1="75" x2="500" y2="75" stroke="rgba(226,178,88,0.12)" stroke-dasharray="3" />
-          <line x1="0" y1="120" x2="500" y2="120" stroke="rgba(226,178,88,0.12)" stroke-dasharray="3" />
-
-          <path id="chartArea" d="M0,120 Q 70,50 140,90 T 280,40 T 420,70 T 500,15 L500,160 L0,160 Z" fill="url(#gold-area-grad)" />
-          <path id="chartPath" d="M0,120 Q 70,50 140,90 T 280,40 T 420,70 T 500,15" fill="none" stroke="url(#gold-line-grad)" stroke-width="3.5" />
-          <g id="chartDotsGroup"></g>
-        </svg>
-
-        <div id="chartXLabels" class="chart-labels-x"></div>
-      </div>
-
-      <!-- Mobile-Friendly Table -->
-      <div class="table-box">
-        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">RECENT TRANSACTIONS LOG</h3>
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Date / Time</th>
-                <th>Status</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody id="transactionsTableBody">
-              <!-- Dynamically Populated by script.js -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+    </div>
 
     </div>
+
+    <!-- Dynamic SVG Chart Container -->
+    <div class="chart-box" style="background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(226, 178, 88, 0.2); border-radius: 12px; padding: 18px;">
+      <div class="chart-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3 style="margin: 0; color: #fff; font-size: 1.05rem; letter-spacing: 0.5px;">SALES PERFORMANCE CHART</h3>
+          <span id="chartSubtext" style="font-size: 0.72rem; color: var(--text-muted, #a0a0a0);">6-Month Profit Trend & Dynamic Scaling</span>
+        </div>
+        
+        <!-- Controls Group: Dropdown Range + Total Badge -->
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <!-- Timeframe Selector -->
+          <select id="chartTimeframeSelect" onchange="handleTimeframeChange(this.value)" style="background: rgba(0,0,0,0.6); color: var(--gold-primary, #e2b258); border: 1px solid rgba(226, 178, 88, 0.3); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none;">
+            <option value="3">Last 3 Months</option>
+            <option value="6" selected>Last 6 Months</option>
+            <option value="9">Last 9 Months</option>
+            <option value="12">Last 1 Year</option>
+          </select>
+
+          <!-- Total Badge -->
+          <div id="chartTotalProfitBadge" style="font-size: 0.8rem; font-weight: 700; color: var(--gold-primary, #e2b258); background: rgba(226, 178, 88, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(226, 178, 88, 0.2);">
+            Total: ₱0
+          </div>
+        </div>
+      </div>
+
+    <div style="position: relative; width: 100%;">
+      <svg class="svg-chart" viewBox="0 0 500 220" style="width: 100%; height: auto; overflow: visible;">
+        <defs>
+          <!-- Dynamic Gradient Line -->
+          <linearGradient id="gold-line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fff0d0" />
+            <stop offset="50%" stop-color="#e2b258" />
+            <stop offset="100%" stop-color="#9e7428" />
+          </linearGradient>
+          <!-- Dynamic Area Gradient -->
+          <linearGradient id="gold-area-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(226, 178, 88, 0.3)" />
+            <stop offset="100%" stop-color="rgba(226, 178, 88, 0.0)" />
+          </linearGradient>
+        </defs>
+
+        <!-- Dynamic Grid Lines Group -->
+        <g id="chartGridLines"></g>
+
+        <!-- Dynamic Chart Paths -->
+        <path id="chartArea" d="" fill="url(#gold-area-grad)" style="transition: all 0.4s ease;" />
+        <path id="chartPath" d="" fill="none" stroke="url(#gold-line-grad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="transition: all 0.4s ease;" />
+        
+        <!-- Dynamic Dots & Tooltip Markers -->
+        <g id="chartDotsGroup"></g>
+      </svg>
+
+      <!-- Interactive Hover Tooltip Box -->
+      <div id="chartTooltip" style="position: absolute; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; background: #000; color: #fff; border: 1px solid var(--gold-primary, #e2b258); padding: 5px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transform: translate(-50%, -120%); z-index: 10;"></div>
+    </div>
+    <!-- Dynamic Month X-Axis Labels -->
+    <div id="chartXLabels" class="chart-labels-x" style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted, #a0a0a0); font-size: 0.75rem; font-weight: 600;"></div>
+    </div>
+
+
+        <!-- Mobile-Friendly Table -->
+        <!-- <div class="table-box">
+          <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">RECENT TRANSACTIONS LOG</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Capital</th>
+                  <th>Selling Price</th>
+                  <th>Profit</th>
+                </tr>
+              </thead>
+              <tbody id="analyticsList">
+                <tr>
+                  <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading product records...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div> -->
+        
+      </div>
   </div>
+</div>
 <!-- Toast Notification Container -->
 <div id="toastContainer" class="toast-container"></div>
 <!-- Pop-up Modal Container -->

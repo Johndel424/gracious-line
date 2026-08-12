@@ -15,7 +15,7 @@
       <!-- Top Navigation -->
       <div class="dash-nav">
         <div class="dash-brand">
-          <img src="img/gracious.jpg" alt="Logo" onerror="this.style.display='none'">
+          <img src="../img/gracious.jpg" alt="Logo" onerror="this.style.display='none'">
           <div>
             <h2 class="brand-title" style="font-size: 1.25rem;">GRACIOUS LINE</h2>
             <div class="brand-subtitle" style="font-size: 0.65rem;">GADGETS & SALES DASHBOARD</div>
@@ -48,9 +48,22 @@
         <h3 style="color: var(--gold-primary); margin: 0;">📊SALES ANALYTICS</h3>
         <span style="font-size: 0.75rem; color: var(--text-muted);">Click any item to view full details</span>
       </div>
+      <input 
+        type="month" 
+        id="monthFilterInput"
+        onchange="filterAnalyticsByMonth(this.value)" 
+        style="background: #151515; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;"
+      >
 
+      <!-- Reset Button -->
+      <button 
+        onclick="document.getElementById('monthFilterInput').value=''; filterAnalyticsByMonth('DEFAULT');" 
+        style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;"
+      >
+        Clear Filter
+      </button>
       <!-- Table Container -->
-      <div class="table-responsive">
+      <div class="table-responsive"style="max-height: 380px; overflow-y: auto; position: relative;">
         <table>
           <thead>
             <tr>
@@ -84,7 +97,7 @@
         
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted);">
           <span id="modalDateAdded">Added: -</span>
-          <span>Date Sold: <span id="modalDateSold" style="color: #fff; font-weight: 500;">-</span></span>
+          <span>Sold: <span id="modalDateSold" style="color: #fff; font-weight: 500;">-</span></span>
         </div>
       </div>
 
@@ -175,6 +188,12 @@
     </div>
 
     <form id="sellProductForm" onsubmit="handleSellSubmit(event)" class="modal-body">
+      <!-- Date Sold (Default to Today) -->
+      <div class="form-group">
+        <label>Sold <span style="color: #f87171;">*Required</span></label>
+        <input type="date" id="sellDate" required style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box; outline: none;">
+      </div>
+
       <div class="form-group">
         <label>Selling Price (₱) <span style="color: #f87171;">*Required</span></label>
         <input type="number" id="sellPrice" placeholder="e.g. 50000" step="0.01" required>

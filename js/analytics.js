@@ -32,53 +32,196 @@ export function showToast(message, type = 'success') {
   }, 3500);
 }
 
+// Variable para sa aktibong month filter ('DEFAULT' o 'YYYY-MM')
+let currentMonthFilter = 'DEFAULT';
+
 // ==========================================
-// 2. LOAD ANALYTICS DATA FROM FIREBASE
+// 2. LOAD & FILTER ANALYTICS DATA
 // ==========================================
 function loadAnalyticsData() {
-  const analyticsListContainer = document.getElementById('analyticsList');
-  if (!analyticsListContainer) return;
-
   const productsRef = ref(db, 'products');
 
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     productsDataStore = data || {};
-
-    if (!data) {
-      analyticsListContainer.innerHTML = `
-        <tr>
-          <td colspan="5" style="text-align: center; color: var(--text-muted);">No product records found.</td>
-        </tr>`;
-      return;
-    }
-
-    let htmlContent = '';
-
-    Object.keys(data).forEach((key) => {
-      const item = data[key];
-      const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
-
-      const statusBadge = item.status === "Sold" 
-        ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">SOLD</span>`
-        : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">AVAILABLE</span>`;
-
-      htmlContent += `
-        <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
-          <td style="font-weight: 600; color: #fff;">
-            ${item.productName || 'Unnamed Product'} <br> ${statusBadge}
-          </td>
-          <td>${formatCurrency(item.price)}</td>
-          <td style="color: var(--gold-primary);">${formatCurrency(item.sellingPrice)}</td>
-          <td style="color: #4ade80; font-weight: 700;">${formatCurrency(item.profit)}</td>
-        </tr>
-      `;
-    });
-
-    analyticsListContainer.innerHTML = htmlContent;
+    
+    // I-render ang talahanayan batay sa kasalukuyang filter
+    renderAnalyticsTable();
   });
 }
 
+// ==========================================
+// 2. LOAD & FILTER ANALYTICS DATA
+// ==========================================
+// ==========================================
+// HELPER: SMART DATE CONVERTER TO "YYYY-MM"
+// ==========================================
+function getYearMonthString(rawDate) {
+  if (!rawDate) return "";
+
+  // 1. Kung number/timestamp (hal. 1723380000000)
+  if (typeof rawDate === 'number') {
+    const d = new Date(rawDate);
+    if (!isNaN(d.getTime())) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    }
+  }
+
+  // 2. Gawing String kung hindi man string
+  const strDate = String(rawDate).trim();
+
+  // 3. Kung naka "YYYY-MM-DD" o ISO string na "2026-08-11T..."
+  if (/^\d{4}-\d{2}/.test(strDate)) {
+    return strDate.substring(0, 7); // Kukunin lang ang "YYYY-MM"
+  }
+
+  // 4. Subukang i-parse gamit ang Javascript Date object
+  const parsedDate = new Date(strDate);
+  if (!isNaN(parsedDate.getTime())) {
+    const yyyy = parsedDate.getFullYear();
+    const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    return `${yyyy}-${mm}`;
+  }
+
+  return "";
+}
+
+// ==========================================
+// 2. LOAD & FILTER ANALYTICS DATA
+// ==========================================
+function renderAnalyticsTable() {
+  const analyticsListContainer = document.getElementById('analyticsList');
+  if (!analyticsListContainer) return;
+
+  if (!productsDataStore || Object.keys(productsDataStore).length === 0) {
+    analyticsListContainer.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; color: var(--text-muted);">No product records found.</td>
+      </tr>`;
+    return;
+  }
+
+  // Kasalukuyang Buwan ngayon (Format: "YYYY-MM")
+  const today = new Date();
+  const currentYearMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+
+  let filteredKeys = Object.keys(productsDataStore).filter((key) => {
+    const item = productsDataStore[key];
+    const itemStatus = item.status || "Available";
+
+    // Kunin ang Purchase Date (uunahin ang datePurchase)
+    const rawPurchaseDate = item.dateSold;
+    const itemPurchaseYM = getYearMonthString(rawPurchaseDate);
+
+    // 🔴 1. DEFAULT VIEW (WALA PANG PINILING BUWAN)
+    if (currentMonthFilter === 'DEFAULT' || !currentMonthFilter) {
+      
+      // RULE 1: Kapag AVAILABLE -> Pakita palagi (Kahit anong buwan binili)
+      if (itemStatus !== "Sold") {
+        return true;
+      }
+      
+      // RULE 2: Kapag SOLD -> Pakita LANG kung ang DATE PURCHASE ay CURRENT MONTH!
+      if (itemStatus === "Sold") {
+        return itemPurchaseYM === currentYearMonth;
+      }
+
+      return false;
+    } 
+    
+    // 🔵 2. SPECIFIC MONTH FILTER (PUMILI NG BUWAN ANG USER)
+    else {
+      // Basta tumugma ang Month ng Purchase Date -> IPAKITA (SOLD MAN O AVAILABLE)
+      return itemPurchaseYM === currentMonthFilter;
+    }
+  });
+
+  // 📌 SORTING LOGIC: LAGING NASA TAAS ANG "AVAILABLE", NASA IBABA ANG "SOLD"
+  filteredKeys.sort((a, b) => {
+    const statusA = productsDataStore[a].status || "Available";
+    const statusB = productsDataStore[b].status || "Available";
+
+    if (statusA !== "Sold" && statusB === "Sold") {
+      return -1; // Unahin si A (Available)
+    }
+    if (statusA === "Sold" && statusB !== "Sold") {
+      return 1;  // Unahin si B (Available)
+    }
+    return 0; // Kung pareho silang Available o parehong Sold, panatilihin ang pagkakaayos
+  });
+
+  // Kapag walang tumugma sa filter
+  if (filteredKeys.length === 0) {
+    const emptyMsg = (currentMonthFilter === 'DEFAULT' || !currentMonthFilter)
+      ? "No available items or items purchased this month."
+      : `No items found for month (${currentMonthFilter}).`;
+
+    analyticsListContainer.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 15px;">
+          ${emptyMsg}
+        </td>
+      </tr>`;
+    return;
+  }
+
+  let htmlContent = '';
+
+  filteredKeys.forEach((key) => {
+    const item = productsDataStore[key];
+    const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
+
+    // const statusBadge = item.status === "Sold" 
+    //   ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">SOLD</span>`
+    //   : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">AVAILABLE</span>`;
+
+    // htmlContent += `
+    //   <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
+    //     <td style="font-weight: 600; color: #fff;">
+    //       ${item.productName || 'Unnamed Product'} <br> ${statusBadge}
+    //     </td>
+    //     <td>${formatCurrency(item.price)}</td>
+    //     <td style="color: var(--gold-primary);">${formatCurrency(item.sellingPrice)}</td>
+    //     <td style="color: #4ade80; font-weight: 700;">${formatCurrency(item.profit)}</td>
+    //   </tr>
+    // `;
+    const statusBadge = item.status === "Sold" 
+  ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
+  : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
+    htmlContent += `
+  <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); font-weight: 600; color: #fff; vertical-align: middle; max-width: 120px; word-break: break-word;">
+      <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;" title="${item.productName || 'Unnamed Product'}">
+        ${item.productName || 'Unnamed Product'}
+      </div>
+      <div style="margin-top: 2px; font-size: clamp(0.6rem, 1.8vw, 0.7rem); line-height: 1;">
+        ${statusBadge}
+      </div>
+    </td>
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); vertical-align: middle; white-space: nowrap;">
+      ${formatCurrency(item.price)}
+    </td>
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: var(--gold-primary); vertical-align: middle; white-space: nowrap;">
+      ${formatCurrency(item.sellingPrice)}
+    </td>
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: #4ade80; font-weight: 700; vertical-align: middle; white-space: nowrap;">
+      ${formatCurrency(item.profit)}
+    </td>
+  </tr>
+`;
+  });
+
+  analyticsListContainer.innerHTML = htmlContent;
+}
+// Function para tawagin kapag nagpalit ng Month Filter sa UI
+function filterAnalyticsByMonth(monthValue) {
+  // monthValue input string format: '2026-08' o 'DEFAULT'
+  currentMonthFilter = monthValue || 'DEFAULT';
+  renderAnalyticsTable();
+}
+
+// Window binding
+window.filterAnalyticsByMonth = filterAnalyticsByMonth;
 // ==========================================
 // 3. OPEN & DISPLAY PRODUCT DETAIL MODAL
 // ==========================================
@@ -93,7 +236,7 @@ function openProductDetailModal(key) {
 
   // Base Info
   document.getElementById('modalProdName').innerText = item.productName || 'Unnamed Product';
-  document.getElementById('modalDateAdded').innerText = `Date Purchase: ${item.datePurchase || 'N/A'}`;
+  document.getElementById('modalDateAdded').innerText = `Purchase: ${item.datePurchase || 'N/A'}`;
   document.getElementById('modalBuyPrice').innerText = formatCurrency(item.price);
   document.getElementById('modalSellingPrice').innerText = formatCurrency(item.sellingPrice);
   document.getElementById('modalProfit').innerText = formatCurrency(item.profit);
@@ -327,6 +470,7 @@ function copyFbLinkFromModal() {
 // ==========================================
 function openSellModal() {
   if (!currentSelectedProduct) return;
+  
   if (currentSelectedProduct.status === "Sold") {
     showToast("This product is already sold!", "error");
     return;
@@ -334,11 +478,19 @@ function openSellModal() {
 
   const sellModal = document.getElementById('sellProductModal');
   const sellForm = document.getElementById('sellProductForm');
+  const sellDateInput = document.getElementById('sellDate');
 
+  // Reset muna ang form
   if (sellForm) sellForm.reset();
+
+  // Auto-set sa petsa ngayon (YYYY-MM-DD)
+  if (sellDateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    sellDateInput.value = today;
+  }
+
   if (sellModal) sellModal.style.display = 'flex';
 }
-
 function closeSellModal() {
   const sellModal = document.getElementById('sellProductModal');
   if (sellModal) sellModal.style.display = 'none';
@@ -383,43 +535,46 @@ async function handleSellSubmit(e) {
   try {
     const productRef = ref(db, `products/${currentSelectedProduct.id}`);
 
-    // 1. I-update ang Status at Shares ng Product
-    await update(productRef, {
-      status: "Sold",
-      sellingPrice: sellingPrice,
-      expenses: expenses,
-      profit: netProfit,
-      dateSold: todayDate,
 
-      // Auto-calculated Shares
-      johndel: johndelShare,
-      geremie: geremieShare,
-      clicky: clickyShare,
-      businessFund: businessShare
+  // Sa loob ng handleSellSubmit(e):
+  const sellDateInput = document.getElementById('sellDate');
+  const selectedSellDate = sellDateInput ? sellDateInput.value : new Date().toISOString().split('T')[0];
+
+  // I-update sa product record sa Firebase
+  await update(productRef, {
+    status: "Sold",
+    sellingPrice: sellingPrice,
+    expenses: expenses,
+    profit: netProfit,
+    dateSold: selectedSellDate, // <-- Gagamitin ang piniling date mula sa input
+
+    johndel: johndelShare,
+    geremie: geremieShare,
+    clicky: clickyShare,
+    businessFund: businessShare
+  });
+
+  // At sa automatic recording sa Business Fund Logs:
+  if (businessShare > 0) {
+    const fundRef = ref(db, 'business_fund_logs');
+    await push(fundRef, {
+      date: selectedSellDate, // <-- Gagamitin din ang piniling date dito
+      amount: businessShare,
+      details: `Profit for ${prodName}`,
+      productId: currentSelectedProduct.id,
+      timestamp: Date.now()
     });
-
-    // 2. AUTOMATIC RECORDING SA BUSINESS FUND LOGS (Kung may kitang Business Fund)
-    if (businessShare > 0) {
-      const fundRef = ref(db, 'business_fund_logs');
-      await push(fundRef, {
-        date: todayDate,
-        amount: businessShare,
-        details: `Profit for ${prodName}`,
-        productId: currentSelectedProduct.id,
-        timestamp: Date.now()
-      });
-    }
-
-    showToast(`Product "${prodName}" marked as SOLD & Business Fund recorded!`, 'success');
-
-    closeSellModal();
-    closeProductDetailModal();
-
-  } catch (err) {
-    console.error("Error marking product as sold:", err);
-    showToast(`Failed: ${err.message}`, 'error');
   }
-}
+      showToast(`Product "${prodName}" marked as SOLD`, 'success');
+
+      closeSellModal();
+      closeProductDetailModal();
+
+    } catch (err) {
+      console.error("Error marking product as sold:", err);
+      showToast(`Failed: ${err.message}`, 'error');
+    }
+  }
 
 // ==========================================
 // 7. DELETE PRODUCT FUNCTION

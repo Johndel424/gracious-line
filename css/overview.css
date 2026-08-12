@@ -646,3 +646,46 @@ tr:hover td {
 .toast-icon {
   font-size: 1.1rem;
 }
+
+.chart-labels-x {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  padding: 0 5px; /* Konting padding para hindi sagad na sagad sa gilid */
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ==========================================
+   LAPTOP & DESKTOP ADJUSTMENTS (1024px pataas)
+   ========================================== */
+@media (min-width: 1024px) {
+  
+
+  .svg-chart {
+    max-height: 180px;     /* Pinipigilan ang sobrang pagtaas ng SVG sa malalapad na screen */
+  }
+/* Full Width & Taller Height Chart */
+.chart-box {
+  width: 100%;             /* 100% Full Width sa laptop/desktop view */
+  box-sizing: border-box;
+  padding: 20px;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(226, 178, 88, 0.2);
+  border-radius: 12px;
+}
+
+.chart-header-flex h3 {
+    font-size: 0.95rem;     /* Mas tamang sukat ng pamagat sa laptop */
+  }
+}
+
+
+/* Responsive adjustment sa CP */
+@media (max-width: 600px) {
+  .analytics-header {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 8px;
+  }
+}
