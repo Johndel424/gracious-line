@@ -171,26 +171,12 @@ function renderAnalyticsTable() {
     const item = productsDataStore[key];
     const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
 
-    // const statusBadge = item.status === "Sold" 
-    //   ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">SOLD</span>`
-    //   : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">AVAILABLE</span>`;
-
-    // htmlContent += `
-    //   <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
-    //     <td style="font-weight: 600; color: #fff;">
-    //       ${item.productName || 'Unnamed Product'} <br> ${statusBadge}
-    //     </td>
-    //     <td>${formatCurrency(item.price)}</td>
-    //     <td style="color: var(--gold-primary);">${formatCurrency(item.sellingPrice)}</td>
-    //     <td style="color: #4ade80; font-weight: 700;">${formatCurrency(item.profit)}</td>
-    //   </tr>
-    // `;
     const statusBadge = item.status === "Sold" 
   ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
   : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
     htmlContent += `
   <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
-    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); font-weight: 600; color: #fff; vertical-align: middle; max-width: 120px; word-break: break-word;">
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.6rem, 2.2vw, 0.82rem); font-weight: 600; color: #fff; vertical-align: middle; max-width: 120px; word-break: break-word;">
       <div style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;" title="${item.productName || 'Unnamed Product'}">
         ${item.productName || 'Unnamed Product'}
       </div>
@@ -198,13 +184,13 @@ function renderAnalyticsTable() {
         ${statusBadge}
       </div>
     </td>
-    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); vertical-align: middle; white-space: nowrap;">
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.6rem, 2.2vw, 0.82rem); vertical-align: middle; white-space: nowrap;">
       ${formatCurrency(item.price)}
     </td>
-    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: var(--gold-primary); vertical-align: middle; white-space: nowrap;">
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.6rem, 2.2vw, 0.82rem); color: var(--gold-primary); vertical-align: middle; white-space: nowrap;">
       ${formatCurrency(item.sellingPrice)}
     </td>
-    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: #4ade80; font-weight: 700; vertical-align: middle; white-space: nowrap;">
+    <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.6rem, 2.2vw, 0.82rem); color: #4ade80; font-weight: 700; vertical-align: middle; white-space: nowrap;">
       ${formatCurrency(item.profit)}
     </td>
   </tr>
