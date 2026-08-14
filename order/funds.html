@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - Gracious Line Gadgets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/order.css">
+</head>
+<body>
+
+  <div class="container container-wide">
+    <div class="card">
+      
+      <!-- Top Navigation -->
+      <div class="dash-nav">
+        <div class="dash-brand">
+          <img src="../img/gracious.jpg" alt="Logo" onerror="this.style.display='none'">
+          <div>
+            <h2 class="brand-title" style="font-size: 1.25rem;">GRACIOUS LINE</h2>
+            <div class="brand-subtitle" style="font-size: 0.65rem;">GADGETS & SALES DASHBOARD</div>
+          </div>
+        </div>
+
+        <div class="user-info">
+           <button class="time-filter-btn active"  onclick="openAddFundModal()"  style="cursor: pointer; font-weight: 700;">
+                ➕ ADD FUNDS
+              </button>
+          <button class="btn-logout" onclick="logout()">LOGOUT</button>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="filter-bar-container">
+        <div>
+          <span class="filter-title">📌 Page: </span>
+          <span style="color: var(--gold-primary); font-weight: 700; font-size: 0.85rem;">Orders</span>
+        </div>
+
+        <div class="time-filter-group">
+          <a href="../overview/overview.html" class="time-filter-btn">Overview</a>
+          <a href="../analytic/analytics.html" class="time-filter-btn">Analytics</a>
+          <a href="orders.html" class="time-filter-btn active">Orders</a>
+        </div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="table-box" style="margin-top: 0;">
+        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
+        <div class="time-filter-group">
+          <a href="orders.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Inventory</a>
+          
+          <a href="funds.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a>
+          
+          <a href="paluwal.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Paluwal</a>
+          
+          <a href="geremoney.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">GereMoney</a>
+        </div>
+
+      
+
+
+<!-- TABLE CONTAINER -->
+<div id="fundTableContainer" class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+  <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+    <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
+      <tr>
+        <th style="width: 30%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Date</th>
+        <th style="width: 35%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Amount</th>
+        <th style="width: 35%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Details</th>
+      </tr>
+    </thead>
+    
+    <tbody id="businessFundList">
+      <!-- Dynamic Rows & Load More Button via JS -->
+    </tbody>
+
+    <!-- STICKY FOOTER PARA SA TOTAL -->
+    <tfoot style="position: sticky; bottom: 0; background: #1a1a1a; z-index: 2; border-top: 2px solid rgba(226, 178, 88, 0.5);">
+      <tr>
+        <td style="padding: 8px 4px; font-size: 0.78rem; font-weight: 700; color: #fff; text-align: center;">
+          TOTAL:
+        </td>
+        <td id="totalBusinessFundAmount" style="padding: 8px 2px; font-size: 0.82rem; font-weight: 800; color: var(--gold-primary, #e2b258); text-align: center; white-space: nowrap;">
+          ₱0
+        </td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- ADD BUSINESS FUND MODAL -->
+<div id="addFundModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
+  <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 380px; width: 100%; padding: 20px; color: #fff; position: relative;">
+    <button onclick="closeAddFundModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
+    
+    <h3 style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+      💵 Add Business Fund
+    </h3>
+
+    <form id="addFundForm" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+      <!-- Date Input (Default: Today) -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Date</label>
+        <input type="date" id="fundDate" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+      </div>
+
+      <!-- Amount Input -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Amount (₱)</label>
+        <input type="number" id="fundAmount" placeholder="e.g. 5000" step="any" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+      </div>
+
+      <!-- Details Input -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Details</label>
+        <textarea id="fundDetails" placeholder="e.g. Additional capital for inventory" rows="3" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box; resize: none;"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" style="margin-top: 8px; padding: 10px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+        Save Entry
+      </button>
+    </form>
+  </div>
+</div>
+
+    </div>
+  </div>
+<!-- Toast Notification Container -->
+<div id="toastContainer" class="toast-container"></div>
+<script type="module" src="../js/funds.js"></script>
+</body>
+</html>

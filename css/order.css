@@ -1,0 +1,836 @@
+/* =========================================================
+   GRACIOUS LINE GADGETS - PREMIUM DARK GOLD THEME STYLESHEET
+   ========================================================= */
+
+:root {
+  --bg-gradient: radial-gradient(circle at center, #3a2e1d 0%, #15110a 100%);
+  --card-bg: linear-gradient(145deg, rgba(30, 26, 20, 0.95), rgba(18, 15, 11, 0.98));
+  --gold-primary: #e2b258;
+  --gold-light: #fff0d0;
+  --gold-dark: #9e7428;
+  --gold-gradient: linear-gradient(180deg, #fff0d0 0%, #e2b258 50%, #9e7428 100%);
+  --btn-gradient: linear-gradient(180deg, #f3e0aa 0%, #d4af37 50%, #8a6b21 100%);
+  --btn-hover-gradient: linear-gradient(180deg, #ffffff 0%, #e2b258 50%, #b88a28 100%);
+  --border-gold: rgba(226, 178, 88, 0.35);
+  --border-gold-bright: rgba(226, 178, 88, 0.8);
+  --text-main: #f0f0f0;
+  --text-muted: #a09585;
+  --danger-color: #ff5252;
+  --success-color: #4cd964;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Page Container */
+.container {
+  width: 100%;
+  max-width: 440px;
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+/* .container-wide {
+  max-width: 950px;
+} */
+.container-wide {
+  max-width: 100% !important; /* Kakainin ang buong lapad ng screen */
+  width: 100%;
+  flex: 1; /* Sasakupin ang buong natitirang taas */
+  display: flex;
+  flex-direction: column;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card Styling */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  padding: 30px 25px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 20px rgba(226, 178, 88, 0.05);
+  position: relative;
+  overflow: hidden;
+  /* 🚀 Full Screen Height Logic */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Header Circuit Accent Frame */
+.circuit-header {
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 20px 15px;
+  text-align: center;
+  margin-bottom: 22px;
+  position: relative;
+  background: rgba(0,0,0,0.35);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.brand-logo {
+  width: 105px;
+  height: 105px;
+  object-fit: cover;
+  margin: 0 auto 12px auto;
+  display: block;
+  border-radius: 16px;
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 5px 15px rgba(226, 178, 88, 0.35);
+}
+
+.brand-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(226, 178, 88, 0.2);
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  color: var(--gold-primary);
+  margin-top: 4px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.brand-est {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.form-title {
+  text-align: center;
+  color: var(--gold-light);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 1.2px;
+}
+
+/* Alert Notification */
+.alert-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 15px;
+  display: none;
+  text-align: center;
+}
+
+.alert-error {
+  background: rgba(255, 82, 82, 0.15);
+  border: 1px solid var(--danger-color);
+  color: #ff8888;
+}
+
+.alert-success {
+  background: rgba(76, 217, 100, 0.15);
+  border: 1px solid var(--success-color);
+  color: #72f08a;
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gold-light);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(226, 178, 88, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(226, 178, 88, 0.4);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Buttons */
+.btn-gold {
+  width: 100%;
+  padding: 14px;
+  background: var(--btn-gradient);
+  border: 1px solid #ffe599;
+  border-radius: 8px;
+  color: #111;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+  transition: all 0.25s ease;
+}
+
+.btn-gold:hover {
+  background: var(--btn-hover-gradient);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 82, 82, 0.2);
+  border-color: var(--danger-color);
+  color: var(--danger-color);
+}
+
+.link-text {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.link-text a {
+  color: var(--gold-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.link-text a:hover {
+  color: var(--gold-light);
+  text-decoration: underline;
+}
+
+/* =========================================================
+   DASHBOARD SPECIFIC STYLES
+   ========================================================= */
+
+.dash-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-gold);
+}
+
+.dash-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--gold-primary);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-badge {
+  font-size: 0.8rem;
+  color: var(--gold-light);
+  background: rgba(226, 178, 88, 0.1);
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-gold);
+}
+
+/* Time Filter Bar */
+.filter-bar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border-gold);
+}
+
+.filter-title {
+  font-size: 0.85rem;
+  color: var(--gold-light);
+  font-weight: 600;
+}
+
+.time-filter-group {
+  display: flex;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(226, 178, 88, 0.2);
+}
+
+.time-filter-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.time-filter-btn.active {
+  background: var(--btn-gradient);
+  color: #111;
+  box-shadow: 0 0 10px rgba(226, 178, 88, 0.4);
+}
+
+/* Stats Cards Grid */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 18px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold-primary);
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--gold-light);
+  margin: 6px 0;
+}
+
+.stat-badge {
+  font-size: 0.75rem;
+  color: var(--success-color);
+  font-weight: 600;
+  display: inline-block;
+  background: rgba(76, 217, 100, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.flex-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.top-product-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.product-img {
+  width: 48px;
+  height: 48px;
+  background: #252018;
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+/* Chart Container */
+.chart-box {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.chart-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.chart-header-flex h3 {
+  font-size: 0.9rem;
+  color: var(--gold-primary);
+  letter-spacing: 1px;
+}
+
+.svg-chart {
+  width: 100%;
+  height: 180px;
+  overflow: visible;
+}
+
+.chart-labels-x {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px 0 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Recent Transactions Table */
+.table-box {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 18px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+}
+
+th {
+  color: var(--gold-primary);
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border-gold);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(226, 178, 88, 0.1);
+  color: var(--text-main);
+}
+
+tr:hover td {
+  background: rgba(226, 178, 88, 0.05);
+}
+
+.status-completed {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.status-pending {
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  .card { padding: 20px 15px; }
+  .filter-bar-container { flex-direction: column; align-items: flex-start; }
+  .dash-nav { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .user-info { width: 100%; justify-content: space-between; }
+}
+
+
+/* modal add product*/
+/* Modal Pop-up Background Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+/* Modal Card Style (Sumusunod sa Dashboard Theme) */
+.modal-card {
+  background: #18181b;
+  border: 1px solid rgba(226, 178, 88, 0.3);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid rgba(226, 178, 88, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-close {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: var(--gold-primary);
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #a1a1aa);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.form-group input, 
+.form-group select {
+  background: #09090b;
+  border: 1px solid rgba(226, 178, 88, 0.2);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+  border-color: var(--gold-primary, #e2b258);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+
+    /* Container para sa bawat Product Card */
+.analytics-card {
+  background: #121215;
+  border: 1px solid rgba(226, 178, 88, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.analytics-card:hover {
+  border-color: var(--gold-primary, #e2b258);
+}
+
+/* Overview Header (Yung nakalitaw sa una) */
+.analytics-header {
+  padding: 12px 15px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 20px;
+  align-items: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  gap: 10px;
+}
+
+.analytics-header div {
+  font-size: 0.85rem;
+}
+
+/* Expanded Section (Hidden by default) */
+.analytics-details {
+  display: none; /* Hide muna */
+  padding: 15px;
+  background: #09090b;
+  border-top: 1px dashed rgba(226, 178, 88, 0.15);
+  font-size: 0.8rem;
+}
+
+.analytics-card.active .analytics-details {
+  display: block; /* Papalit sa visible kapag na-click */
+}
+
+.analytics-card.active .arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* Detailed Grid inside Expandable View */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-item span.label {
+  font-size: 0.7rem;
+  color: var(--text-muted, #a1a1aa);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.detail-item span.val {
+  color: #fff;
+  font-weight: 600;
+}
+
+.arrow-icon {
+  color: var(--gold-primary);
+  transition: transform 0.2s ease;
+  font-size: 0.8rem;
+}
+
+/* Responsive adjustment sa CP */
+@media (max-width: 600px) {
+  .analytics-header {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 8px;
+  }
+}
+
+/* Toast Notification Container */
+.toast-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+/* Base Toast Style */
+.toast {
+  pointer-events: auto;
+  min-width: 280px;
+  padding: 14px 20px;
+  background: #18181b;
+  border: 1px solid var(--border-gold, #e2b258);
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(226, 178, 88, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* Toast Show Class */
+.toast.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Status Variants */
+.toast-success {
+  border-left: 4px solid #4ade80;
+}
+
+.toast-error {
+  border-left: 4px solid #f87171;
+}
+
+.toast-icon {
+  font-size: 1.1rem;
+}
+
+/* Equals Grid Layout for Modal */
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* Ginagarantiyang pantay ang 2 columns */
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.detail-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0; /* Important: Pinipigilan ang grid item na lumampas kapag mahaba ang text */
+  overflow: hidden;
+}
+
+.detail-item .label {
+  font-size: 0.7rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detail-item .val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Pag masyadong mahaba ang value, papalitan ng "..." sa halip na sirain ang layout */
+  width: 100%;
+}
+/* Slim Grid for Details Modal */
+.details-grid-slim {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px; /* Binawasan ang espasyo sa pagitan ng boxes */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.detail-item-slim {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  padding: 4px 8px; /* Manipis na padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.detail-item-slim .label {
+  font-size: 0.65rem; /* Mas maliit na label */
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detail-item-slim .val {
+  font-size: 0.8rem; /* Mas maliit na value text */
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* PANG CENTER NA NAV */
+/* Container para sa 3 buttons */
+.time-filter-group {
+  display: flex;
+  width: 100%;             /* Kakainin ang available width */
+  max-width: 400px;        /* Swak at hindi sobrang haba sa laptop */
+  gap: 4px;                /* Pantay na agwat sa pagitan ng mga button */
+}
+
+/* Bawat Button - Hahatiin sa 3 nang PANTAY NA PANTAY */
+.time-filter-btn {
+  flex: 1 1 0%;            /* Sineseguro na eksaktong 1/3 ang lapad ng bawat isa */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Naka-center ang text sa gitna ng button */
+  text-align: center;
+  white-space: nowrap;      /* Iwas putol o wrap ng text */
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  box-sizing: border-box;
+}

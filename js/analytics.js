@@ -170,69 +170,37 @@ function renderAnalyticsTable() {
   filteredKeys.forEach((key) => {
     const item = productsDataStore[key];
     const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
-    // Function para hiwa-hiwalayin ang salita nang malinis
-const formatProductName = (name) => {
-  if (!name) return 'Unnamed Product';
-  
-  // Palitan ang space bago ang mga storage/variant specs para bumaba agad
-  // Halimbawa: "REALME NOTE 70 128GB" -> "REALME<br>NOTE 70<br>128GB"
-  return name
-    .trim()
-    .replace(/\s+(\d+(GB|TB|RAM|5G))/gi, '<br>$1') // Hihiwalay ang specs tulad ng 128GB
-    .replace(/\s+/g, '<br>');                      // O hiwalayin bawat salita
-};
     const statusBadge = item.status === "Sold" 
-  ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
-  : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
-//     htmlContent += `
-//   <tr style="cursor: pointer;" onclick="openProductDetailModal('${key}')">
-//     <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); font-weight: 600; color: #fff; vertical-align: middle; max-width: 120px; word-break: break-word;">
-//       <div style="line-height: 1.15;" title="${item.productName || 'Unnamed Product'}">
-//         ${(item.productName || 'Unnamed Product').match(/.{1,8}/g).join('<br>')}
-//       </div>
-//       <div style="margin-top: 2px; font-size: clamp(0.6rem, 1.8vw, 0.7rem); line-height: 1;">
-//         ${statusBadge}
-//       </div>
-//     </td>
-//     <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); vertical-align: middle; white-space: nowrap;">
-//       ${formatCurrency(item.price)}
-//     </td>
-//     <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: var(--gold-primary); vertical-align: middle; white-space: nowrap;">
-//       ${formatCurrency(item.sellingPrice)}
-//     </td>
-//     <td style="padding: clamp(4px, 1.2vw, 8px) clamp(5px, 1.5vw, 10px); font-size: clamp(0.7rem, 2.2vw, 0.82rem); color: #4ade80; font-weight: 700; vertical-align: middle; white-space: nowrap;">
-//       ${formatCurrency(item.profit)}
-//     </td>
-//   </tr>
-// `;
-htmlContent += `
-  <tr style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);" onclick="openProductDetailModal('${key}')">
-    <!-- COL 1: Product Name & Badge (40% Width) -->
-    <td style="width: 40%; padding: 6px 4px; vertical-align: middle; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
-      <div style="font-size: clamp(0.68rem, 2.2vw, 0.8rem); font-weight: 600; color: #fff; line-height: 1.2;">
-        ${item.productName || 'Unnamed Product'}
-      </div>
-      <div style="margin-top: 3px;">
-        ${statusBadge}
-      </div>
-    </td>
+      ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
+      : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
+    htmlContent += `
+      <tr style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);" onclick="openProductDetailModal('${key}')">
+        <!-- COL 1: Product Name & Badge (40% Width) -->
+        <td style="width: 40%; padding: 6px 4px; vertical-align: middle; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
+          <div style="font-size: clamp(0.68rem, 2.2vw, 0.8rem); font-weight: 600; color: #fff; line-height: 1.2;">
+            ${item.productName || 'Unnamed Product'}
+          </div>
+          <div style="margin-top: 3px;">
+            ${statusBadge}
+          </div>
+        </td>
 
-    <!-- COL 2: Capital (20% Width) -->
-    <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); vertical-align: middle; text-align: center; white-space: nowrap;">
-      ${formatCurrency(item.price)}
-    </td>
+        <!-- COL 2: Capital (20% Width) -->
+        <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); vertical-align: middle; text-align: center; white-space: nowrap;">
+          ${formatCurrency(item.price)}
+        </td>
 
-    <!-- COL 3: Selling Price (20% Width) -->
-    <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: var(--gold-primary); vertical-align: middle; text-align: center; white-space: nowrap;">
-      ${formatCurrency(item.sellingPrice)}
-    </td>
+        <!-- COL 3: Selling Price (20% Width) -->
+        <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: var(--gold-primary); vertical-align: middle; text-align: center; white-space: nowrap;">
+          ${formatCurrency(item.sellingPrice)}
+        </td>
 
-    <!-- COL 4: Profit (20% Width) -->
-    <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: #4ade80; font-weight: 700; vertical-align: middle; text-align: center; white-space: nowrap;">
-      ${formatCurrency(item.profit)}
-    </td>
-  </tr>
-`;
+        <!-- COL 4: Profit (20% Width) -->
+        <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: #4ade80; font-weight: 700; vertical-align: middle; text-align: center; white-space: nowrap;">
+          ${formatCurrency(item.profit)}
+        </td>
+      </tr>
+    `;
   });
 
   analyticsListContainer.innerHTML = htmlContent;
@@ -587,6 +555,16 @@ async function handleSellSubmit(e) {
       details: `Profit for ${prodName}`,
       productId: currentSelectedProduct.id,
       timestamp: Date.now()
+    });
+  }
+  // At sa automatic recording sa Business Fund Logs:
+  if (businessShare > 0) {
+    const fundRef = ref(db, 'geremie_fund_logs');
+    await push(fundRef, {
+      date: selectedSellDate, // <-- Gagamitin din ang piniling date dito
+      amount: businessShare,
+      details: `Profit for ${prodName}`,
+      give: 'Not yet'
     });
   }
       showToast(`Product "${prodName}" marked as SOLD`, 'success');
