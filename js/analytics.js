@@ -3,7 +3,39 @@ import { ref, onValue, update, remove, push } from "https://www.gstatic.com/fire
 
 let productsDataStore = {};
 let currentSelectedProduct = null;
+// ==========================================
+// ELEGANT SKELETON LOADING HELPER
+// ==========================================
+function showAnalyticsLoading() {
+  const tbody = document.getElementById('analyticsList');
+  if (!tbody) return;
 
+  // Nagre-render ng 5 skeleton rows para punan ang table habang nag-aantay
+  let skeletonRows = '';
+  for (let i = 0; i < 5; i++) {
+    skeletonRows += `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 80%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 70%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 50%;"></span>
+        </td>
+      </tr>
+    `;
+  }
+
+  tbody.innerHTML = skeletonRows;
+}
 // ==========================================
 // 1. CUSTOM TOAST NOTIFICATION SYSTEM
 // ==========================================
@@ -38,18 +70,42 @@ let currentMonthFilter = 'DEFAULT';
 // ==========================================
 // 2. LOAD & FILTER ANALYTICS DATA
 // ==========================================
+// function loadAnalyticsData() {
+//   const productsRef = ref(db, 'products');
+
+//   onValue(productsRef, (snapshot) => {
+//     const data = snapshot.val();
+//     productsDataStore = data || {};
+//     showAnalyticsLoading();
+//     // I-render ang talahanayan batay sa kasalukuyang filter
+//     renderAnalyticsTable();
+//   });
+// }
 function loadAnalyticsData() {
+  // 1. IPAKITA AGAD ANG LOADING UI HABANG NAGHIHINTAY SA FIREBASE
+  showAnalyticsLoading();
+
   const productsRef = ref(db, 'products');
 
   onValue(productsRef, (snapshot) => {
     const data = snapshot.val();
     productsDataStore = data || {};
     
-    // I-render ang talahanayan batay sa kasalukuyang filter
+    // 2. PAGKATAPOS LUMABAS NG DATA, IPAPALIT NA ANG TOTOONG TABLE ROWS
     renderAnalyticsTable();
+  }, (error) => {
+    console.error("Firebase Error:", error);
+    const container = document.getElementById('analyticsList');
+    if (container) {
+      container.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align: center; color: #ef4444; padding: 15px; font-size: 0.75rem;">
+            ⚠️ Failed to load analytics data.
+          </td>
+        </tr>`;
+    }
   });
 }
-
 // ==========================================
 // 2. LOAD & FILTER ANALYTICS DATA
 // ==========================================

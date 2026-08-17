@@ -1,5 +1,5 @@
 import { db } from "../firebase.js";
-import { ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
 // Global state
 let allBusinessFundsCache = [];
@@ -74,14 +74,13 @@ function renderBusinessFundTable() {
   const overallTotal = allBusinessFundsCache.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
   if (totalAmountEl) totalAmountEl.innerText = formatCurrency(overallTotal);
 
-  // 2. Pagination Slicing (Oldest to Newest order)
+  // 2. Pagination Slicing
   const totalCount = allBusinessFundsCache.length;
   const startIndex = Math.max(0, totalCount - itemsToShow);
   const visibleItems = allBusinessFundsCache.slice(startIndex);
 
   let htmlContent = '';
 
-  // Kung may hindi pa nai-load na lumang entries, maglagay ng LOAD MORE BUTTON sa pinakataas
   if (startIndex > 0) {
     const remainingCount = startIndex;
     htmlContent += `
@@ -99,21 +98,48 @@ function renderBusinessFundTable() {
 
   // Render rows
   visibleItems.forEach(item => {
+    const itemId = item.id || item.key;
     const amount = Number(item.amount) || 0;
     const dateDisplay = formatDate(item.date || item.createdAt);
     const logDetails = item.details || item.log || item.remarks || '—';
     const amountColor = amount >= 0 ? '#4ade80' : '#ef4444';
 
+    // 🔴 CONDITION: LALABAS LANG ANG NOTE BUTTON KAPAG NEGATIVE ANG AMOUNT (< 0)
+    let noteBtnHTML = '';
+
+    if (amount < 0) {
+      const hasNotes = Array.isArray(item.itemizedNotes) && item.itemizedNotes.length > 0;
+      
+      if (hasNotes) {
+        const notePreviewText = item.itemizedNotes.map(n => `${n.label}: ₱${n.amount}`).join(', ');
+        noteBtnHTML = `
+          <button onclick="openFundNoteModal('${itemId}')" style="background: rgba(226, 178, 88, 0.15); border: 1px solid var(--gold-primary, #e2b258); color: var(--gold-primary, #e2b258); padding: 2px 7px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; cursor: pointer; margin-top: 4px; display: inline-flex; align-items: center; gap: 3px;">
+            📝 View Breakdown
+          </button>`;
+      } else {
+        noteBtnHTML = `
+          <button onclick="openFundNoteModal('${itemId}')" style="background: transparent; border: 1px dashed rgba(255,255,255,0.25); color: #aaa; padding: 2px 7px; border-radius: 4px; font-size: 0.62rem; cursor: pointer; margin-top: 4px; display: inline-flex; align-items: center; gap: 3px;">
+            + Add Note
+          </button>`;
+      }
+    }
+
     htmlContent += `
       <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <!-- Col 1: Date -->
         <td style="width: 30%; padding: 8px 4px; font-size: clamp(0.65rem, 1.8vw, 0.75rem); color: #ccc; text-align: center; vertical-align: middle; white-space: nowrap;">
           ${dateDisplay}
         </td>
+
+        <!-- Col 2: Amount -->
         <td style="width: 35%; padding: 8px 2px; font-size: clamp(0.68rem, 2vw, 0.78rem); font-weight: 700; color: ${amountColor}; text-align: center; vertical-align: middle; white-space: nowrap;">
           ${formatCurrency(amount)}
         </td>
+
+        <!-- Col 3: Details & Notes (Conditional) -->
         <td style="width: 35%; padding: 8px 4px; font-size: clamp(0.65rem, 1.8vw, 0.75rem); color: #fff; text-align: center; vertical-align: middle; word-break: break-word;">
-          ${logDetails}
+          <div>${logDetails}</div>
+          ${noteBtnHTML}
         </td>
       </tr>
     `;
@@ -121,17 +147,223 @@ function renderBusinessFundTable() {
 
   tbody.innerHTML = htmlContent;
 
-  // 3. Sagad sa baba pag-load lang sa simula
   if (isInitialRender) {
     scrollToBottom();
     isInitialRender = false;
   }
 }
+let currentNoteLogId = null;
+let currentTargetAmount = 0;
+let tempNoteItems = [];
 
+// 1. OPEN MODAL
+export function openFundNoteModal(logId) {
+  currentNoteLogId = logId;
+  const item = allBusinessFundsCache.find(f => (f.id || f.key) === logId);
+  if (!item) return;
+
+  // Kunin ang target amount (kinukuha ang positive value para sa matching)
+  currentTargetAmount = Math.abs(Number(item.amount) || 0);
+
+  // Kuhanin ang nakaimbak na items o mag-set ng 1 empty row sa simula
+  if (Array.isArray(item.itemizedNotes) && item.itemizedNotes.length > 0) {
+    tempNoteItems = JSON.parse(JSON.stringify(item.itemizedNotes));
+  } else {
+    tempNoteItems = [{ label: '', amount: '' }];
+  }
+
+  const targetEl = document.getElementById('modalTargetAmount');
+  if (targetEl) targetEl.textContent = `₱${currentTargetAmount.toLocaleString()}`;
+
+  renderNoteItemRows();
+  
+  const modal = document.getElementById('fundNoteModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+// 2. RENDER Dynamic Input Rows
+function renderNoteItemRows() {
+  const container = document.getElementById('noteItemsContainer');
+  if (!container) return;
+
+  let html = '';
+  tempNoteItems.forEach((item, index) => {
+    html += `
+      <div style="display: flex; gap: 2%; align-items: center; width: 100%; box-sizing: border-box; margin-bottom: 6px;">
+        
+        <!-- Column 1: Item Label (40%) -->
+        <input 
+          type="text" 
+          placeholder="Item label" 
+          value="${item.label || ''}" 
+          oninput="updateNoteItemData(${index}, 'label', this.value)"
+          style="width: 45%; background: #222; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 6px; border-radius: 6px; font-size: 0.7rem; outline: none; box-sizing: border-box;"
+        />
+
+        <!-- Column 2: Amount (40%) -->
+        <input 
+          type="number" 
+          placeholder="Amount" 
+          value="${item.amount !== '' ? item.amount : ''}" 
+          oninput="updateNoteItemData(${index}, 'amount', this.value)"
+          style="width: 45%; background: #222; border: 1px solid rgba(255,255,255,0.15); color: #4ade80; padding: 5px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; outline: none; box-sizing: border-box;"
+        />
+
+        <!-- Column 3: Remove Button (10%) -->
+        <div style="width: 10%; display: flex; justify-content: center; align-items: center;">
+          ${tempNoteItems.length > 1 ? `
+            <button type="button" onclick="removeNoteRow(${index})" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 24px; height: 24px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
+              ✕
+            </button>
+          ` : `
+            <span style="opacity: 0.2; font-size: 0.65rem; color: #aaa;">—</span>
+          `}
+        </div>
+
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  checkNoteTotalValidation();
+}
+
+// 3. ROW MANAGEMENT
+window.addNoteRow = function() {
+  tempNoteItems.push({ label: '', amount: '' });
+  renderNoteItemRows();
+};
+
+window.removeNoteRow = function(index) {
+  tempNoteItems.splice(index, 1);
+  renderNoteItemRows();
+};
+
+window.updateNoteItemData = function(index, field, value) {
+  if (field === 'amount') {
+    tempNoteItems[index].amount = value === '' ? '' : Number(value);
+  } else {
+    tempNoteItems[index].label = value;
+  }
+  checkNoteTotalValidation();
+};
+
+// 4. LIVE TOTAL & VALIDATION CHECKER
+function checkNoteTotalValidation() {
+  const currentTotal = tempNoteItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  const statusEl = document.getElementById('noteTotalStatus');
+  const saveBtn = document.getElementById('btnSaveFundNote');
+
+  const isValid = currentTotal === currentTargetAmount && currentTotal > 0;
+
+  if (statusEl) {
+    if (isValid) {
+      statusEl.style.background = 'rgba(74, 222, 128, 0.15)';
+      statusEl.style.color = '#4ade80';
+      statusEl.style.border = '1px solid #4ade80';
+      statusEl.innerHTML = `✓ Total: ₱${currentTotal.toLocaleString()} (Matched!)`;
+    } else {
+      statusEl.style.background = 'rgba(239, 68, 68, 0.15)';
+      statusEl.style.color = '#ef4444';
+      statusEl.style.border = '1px solid #ef4444';
+      statusEl.innerHTML = `✕ Total: ₱${currentTotal.toLocaleString()} / Target: ₱${currentTargetAmount.toLocaleString()}`;
+    }
+  }
+
+  if (saveBtn) {
+    saveBtn.style.opacity = isValid ? '1' : '0.5';
+    saveBtn.style.cursor = isValid ? 'pointer' : 'not-allowed';
+  }
+
+  return isValid;
+}
+
+// 5. SAVE TO FIREBASE (Direct sa specific child node ng business_fund_logs)
+export function saveFundNote() {
+  // Clean empty inputs
+  const cleanedItems = tempNoteItems.filter(item => item.label.trim() !== '' || Number(item.amount) > 0);
+  const currentTotal = cleanedItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+
+  // STRICT VALIDATION: Pag hindi magkapareho sa click amount, bawal i-save
+  if (currentTotal !== currentTargetAmount) {
+  if (typeof showToast === 'function') {
+    showToast(`Cannot save! The total (₱${currentTotal.toLocaleString()}) must match ₱${currentTargetAmount.toLocaleString()}`);
+  } else {
+    alert(`Cannot save!\nThe total (₱${currentTotal.toLocaleString()}) must equal ₱${currentTargetAmount.toLocaleString()}`);
+  }
+  return;
+}
+
+  if (!currentNoteLogId) return;
+
+  // 🔴 DITO PAPASOK SA SPECIFIC NODE NA CLINICK UNDER 'business_fund_logs'
+  const targetNodeRef = ref(db, `business_fund_logs/${currentNoteLogId}`);
+
+  update(targetNodeRef, { itemizedNotes: cleanedItems })
+    .then(() => {
+      // Update local cache
+      const item = allBusinessFundsCache.find(f => (f.id || f.key) === currentNoteLogId);
+      if (item) item.itemizedNotes = cleanedItems;
+
+      renderBusinessFundTable();
+      closeFundNoteModal();
+      if (typeof showToast === 'function') showToast('Breakdown Note saved successfully!');
+    })
+    .catch((err) => {
+      console.error('Error saving note:', err);
+      if (typeof showToast === 'function') showToast('Failed to save breakdown note.');
+    });
+}
+
+// CLOSE MODAL
+export function closeFundNoteModal() {
+  const modal = document.getElementById('fundNoteModal');
+  if (modal) modal.style.display = 'none';
+  currentNoteLogId = null;
+}
+
+// Window Bindings
+window.openFundNoteModal = openFundNoteModal;
+window.closeFundNoteModal = closeFundNoteModal;
+window.saveFundNote = saveFundNote;
+// ==========================================
+// ELEGANT SKELETON LOADING HELPER
+// ==========================================
+function showAnalyticsLoading() {
+  const tbody = document.getElementById('businessFundList');
+  if (!tbody) return;
+
+  // Nagre-render ng 5 skeleton rows para punan ang table habang nag-aantay
+  let skeletonRows = '';
+  for (let i = 0; i < 5; i++) {
+    skeletonRows += `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 80%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 70%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 50%;"></span>
+        </td>
+      </tr>
+    `;
+  }
+
+  tbody.innerHTML = skeletonRows;
+}
 // ==========================================
 // 4. FIREBASE REAL-TIME LISTENER
 // ==========================================
 export function loadBusinessFunds() {
+  showAnalyticsLoading();
   const fundRef = ref(db, 'business_fund_logs');
 
   onValue(fundRef, (snapshot) => {

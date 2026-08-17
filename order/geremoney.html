@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders - Gracious Line Gadgets</title>
+  <title>Analytics - Gracious Line Gadgets</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/order.css">
-  <style>
-    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table-responsive table { min-width: 600px; }
-  </style>
 </head>
 <body>
 
@@ -27,7 +23,9 @@
         </div>
 
         <div class="user-info">
-          <span class="user-badge">👤 Logged in as: <strong id="userBadgeEmail">Admin</strong></span>
+           <button class="time-filter-btn active"  onclick="openAddFundModal()"  style="cursor: pointer; font-weight: 700;">
+                ➕ ADD FUNDS
+              </button>
           <button class="btn-logout" onclick="logout()">LOGOUT</button>
         </div>
       </div>
@@ -48,23 +46,141 @@
 
       <!-- Page Content -->
       <div class="table-box" style="margin-top: 0;">
-        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">GEREMONEY</h3>
-        <div class="time-filter-group" style="display: flex; width: 100%; gap: 4px; box-sizing: border-box;">
+        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
+        <div class="time-filter-group">
           <a href="orders.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Inventory</a>
           
           <a href="funds.html" class="time-filter-btn " style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a>
           
           <a href="paluwal.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Paluwal</a>
           
-          <a href="geremoney.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">GereMoney</a>
+          <a href="geremoney.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Geremie</a>
         </div>
 
-        
+      
+
+
+        <!-- TABLE CONTAINER -->
+        <div id="geremieTableContainer" class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+  <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+    <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
+      <tr>
+        <th style="width: 25%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Date</th>
+        <th style="width: 30%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Amount</th>
+        <th style="width: 25%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Details</th>
+        <th style="width: 20%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Give</th>
+      </tr>
+    </thead>
+    
+    <tbody id="geremieList">
+      <!-- Dynamic Rows & Group Header/Totals via JS -->
+    </tbody>
+
+    <!-- STICKY FOOTER PARA SA OVERALL UNPAID/PENDING TOTAL -->
+    <tfoot style="position: sticky; bottom: 0; background: #1a1a1a; z-index: 2; border-top: 2px solid rgba(226, 178, 88, 0.5);">
+      <tr>
+        <td style="padding: 8px 4px; font-size: 0.75rem; font-weight: 700; color: #fff; text-align: center;">
+          UNPAID TOTAL:
+        </td>
+        <td id="totalGeremieAmount" style="padding: 8px 2px; font-size: 0.82rem; font-weight: 800; color: var(--gold-primary, #e2b258); text-align: center; white-space: nowrap;">
+          ₱0
+        </td>
+        <td colspan="2" style="padding: 8px 4px; text-align: center;">
+          <button id="btnBatchSettle" onclick="settleCurrentBatch()" style="display: none; background: #4ade80; border: none; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: bold; cursor: pointer;">
+            ✓ Mark All Paid
+          </button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<!-- BATCH SETTLE MODAL POPUP -->
+<div id="settleModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 15px;">
+  <div style="background: #18181b; border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; width: 100%; max-width: 360px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: sans-serif; color: #fff;">
+    
+    <!-- Title -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: #4ade80;">💵 Settle Batch Payment</h3>
+      <button onclick="closeSettleModal()" style="background: transparent; border: none; color: #aaa; font-size: 1.1rem; cursor: pointer;">✕</button>
+    </div>
+
+    <!-- Total Pending Card -->
+    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 8px; margin-bottom: 12px; text-align: center;">
+      <div style="font-size: 0.68rem; color: #ef4444; font-weight: 600;">KASALUKUYANG UNSETTLED TOTAL</div>
+      <div id="settleTotalPendingDisplay" style="font-size: 1.2rem; font-weight: 800; color: #fff; margin-top: 2px;">₱0</div>
+    </div>
+
+    <!-- Form Inputs -->
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+      <div>
+        <label style="font-size: 0.68rem; color: #aaa; display: block; margin-bottom: 4px;">HALAGA NG IBIBIGAY (AMOUNT):</label>
+        <input type="number" id="settleAmountInput" placeholder="0" style="width: 100%; background: #27272a; border: 1px solid #3f3f46; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; box-sizing: border-box;" />
       </div>
+
+      <div>
+        <label style="font-size: 0.68rem; color: #aaa; display: block; margin-bottom: 4px;">SETTLEMENT DATE:</label>
+        <input type="date" id="settleDateInput" style="width: 100%; background: #27272a; border: 1px solid #3f3f46; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box;" />
+      </div>
+
+      <!-- Auto calculated Remaining -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #27272a; padding: 8px 10px; border-radius: 6px;">
+        <span style="font-size: 0.7rem; color: #aaa;">Matitira sa susunod (Next Batch):</span>
+        <span id="settleRemainingDisplay" style="font-size: 0.8rem; font-weight: 700; color: #ef4444;">₱0</span>
+      </div>
+    </div>
+
+    <!-- Modal Action Buttons -->
+    <div style="display: flex; gap: 8px;">
+      <button onclick="closeSettleModal()" style="flex: 1; background: #27272a; border: 1px solid #3f3f46; color: #ccc; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600;">
+        Cancel
+      </button>
+      <button onclick="confirmBatchSettle()" style="flex: 1; background: #22c55e; border: none; color: #000; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 800;">
+        Confirm Settle
+      </button>
+    </div>
+
+  </div>
+</div>
+<!-- ADD BUSINESS FUND MODAL -->
+<div id="addFundModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
+  <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 380px; width: 100%; padding: 20px; color: #fff; position: relative;">
+    <button onclick="closeAddFundModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
+    
+    <h3 style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+      💵 Add Business Fund
+    </h3>
+
+    <form id="addFundForm" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+      <!-- Date Input (Default: Today) -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Date</label>
+        <input type="date" id="fundDate" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+      </div>
+
+      <!-- Amount Input -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Amount (₱)</label>
+        <input type="number" id="fundAmount" placeholder="e.g. 5000" step="any" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+      </div>
+
+      <!-- Details Input -->
+      <div>
+        <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Details</label>
+        <textarea id="fundDetails" placeholder="e.g. Additional capital for inventory" rows="3" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box; resize: none;"></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" style="margin-top: 8px; padding: 10px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+        Save Entry
+      </button>
+    </form>
+  </div>
+</div>
 
     </div>
   </div>
-
-</body>
+<!-- Toast Notification Container -->
+<div id="toastContainer" class="toast-container"></div>
 <script type="module" src="../js/geremoney.js"></script>
+</body>
 </html>

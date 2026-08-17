@@ -1,186 +1,3 @@
-// import { db } from "../firebase.js";
-// import { ref, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
-// // Global cache para sa fast local searching nang hindi nagre-fetch sa Firebase
-// let allProductsCache = [];
-
-// // ==========================================
-// // 1. CUSTOM TOAST NOTIFICATION SYSTEM
-// // ==========================================
-// export function showToast(message, type = 'success') {
-//   let container = document.getElementById('toastContainer');
-  
-//   if (!container) {
-//     container = document.createElement('div');
-//     container.id = 'toastContainer';
-//     container.className = 'toast-container';
-//     document.body.appendChild(container);
-//   }
-
-//   const toast = document.createElement('div');
-//   const icon = type === 'success' ? '✨' : '⚠️';
-//   toast.className = `toast toast-${type}`;
-//   toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
-
-//   container.appendChild(toast);
-
-//   setTimeout(() => toast.classList.add('show'), 10);
-
-//   setTimeout(() => {
-//     toast.classList.remove('show');
-//     setTimeout(() => toast.remove(), 300);
-//   }, 3500);
-// }
-
-// // ==========================================
-// // 2. HELPER FUNCTIONS (Currency & Date Diff)
-// // ==========================================
-// const formatCurrency = (amount) => {
-//   if (amount === undefined || amount === null || amount === "" || isNaN(amount)) return "—";
-//   return `₱${Number(amount).toLocaleString('en-PH')}`;
-// };
-
-// // Compute kung ilang araw ang agwat mula Date Purchased hanggang Date Sold
-// const calculateDaysDifference = (datePurchase, dateSold) => {
-//   if (!datePurchase || !dateSold) return "—";
-  
-//   const start = new Date(datePurchase);
-//   const end = new Date(dateSold);
-  
-//   // Kung invalid date format, mag-return ng fallback
-//   if (isNaN(start) || isNaN(end)) return "—";
-
-//   const diffTime = end - start;
-//   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-//   if (diffDays < 0) return "0 days";
-//   return diffDays === 1 ? "1 day" : `${diffDays} days`;
-// };
-
-// // ==========================================
-// // 3. RENDER TABLE FUNCTION
-// // ==========================================
-// function renderAnalyticsTable(productsList) {
-//   const tbody = document.getElementById('analyticsList');
-//   if (!tbody) return;
-
-//   if (!productsList || productsList.length === 0) {
-//     tbody.innerHTML = `
-//       <tr>
-//         <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 15px; font-size: 0.8rem;">
-//           No records found.
-//         </td>
-//       </tr>`;
-//     return;
-//   }
-
-//   let htmlContent = '';
-
-//   productsList.forEach(item => {
-//     const key = item.id;
-//     const productName = item.productName || 'Unnamed Product';
-//     const buyerName = item.buyerName || '—';
-//     const avgSoldDays = calculateDaysDifference(item.datePurchase, item.dateSold);
-
-//     // Status Badge Component
-//     const statusBadge = item.status === "Sold" 
-//       ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; display: inline-block;">SOLD</span>`
-//       : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; display: inline-block;">AVAILABLE</span>`;
-
-//     htmlContent += `
-//       <tr style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);" onclick="openProductDetailModal('${key}')">
-//         <!-- 1. Product Name & Status Badge (40% width) -->
-//         <td style="width: 20%; padding: 6px 4px; vertical-align: middle; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
-//           <div style="font-size: clamp(0.68rem, 2.2vw, 0.8rem); font-weight: 600; color: #fff; line-height: 1.2;" title="${productName}">
-//             ${productName}
-//           </div>
-//           <div style="margin-top: 2px;">
-//             ${statusBadge}
-//           </div>
-//         </td>
-
-//         <!-- 2. Capital / Price -->
-//         <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); vertical-align: middle; text-align: center; white-space: nowrap;">
-//           ${formatCurrency(item.price)}
-//         </td>
-
-//         <!-- 3. Selling Price -->
-//         <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: var(--gold-primary); vertical-align: middle; text-align: center; white-space: nowrap;">
-//           ${formatCurrency(item.sellingPrice)}
-//         </td>
-
-//         <!-- 4. Customer / Buyer Name -->
-//         <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: #fff; vertical-align: middle; text-align: center; word-break: break-word;">
-//           ${buyerName}
-//         </td>
-
-//         <!-- 5. Average Days Sold (datePurchase to dateSold) -->
-//         <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); color: #4ade80; font-weight: 700; vertical-align: middle; text-align: center; white-space: nowrap;">
-//           ${avgSoldDays}
-//         </td>
-//       </tr>
-//     `;
-//   });
-
-//   tbody.innerHTML = htmlContent;
-// }
-
-// // ==========================================
-// // 4. FIREBASE REAL-TIME LISTENER
-// // ==========================================
-// export function loadAnalyticsProducts() {
-//   const productsRef = ref(db, 'products');
-
-//   onValue(productsRef, (snapshot) => {
-//     if (!snapshot.exists()) {
-//       renderAnalyticsTable([]);
-//       return;
-//     }
-
-//     const data = snapshot.val();
-//     allProductsCache = Object.keys(data).map(key => ({
-//       id: key,
-//       ...data[key]
-//     }));
-
-//     // I-render ang buong listahan sa simula
-//     renderAnalyticsTable(allProductsCache);
-//   });
-// }
-
-// // ==========================================
-// // 5. SEARCH FUNCTION (ProductName & BuyerName)
-// // ==========================================
-// export function filterProductsBySearch(query) {
-//   const searchTerm = query.toLowerCase().trim();
-
-//   if (!searchTerm) {
-//     renderAnalyticsTable(allProductsCache);
-//     return;
-//   }
-
-//   const filtered = allProductsCache.filter(item => {
-//     const pName = (item.productName || '').toLowerCase();
-//     const bName = (item.buyerName || '').toLowerCase();
-
-//     // Hahanapin sa parehong Product Name O Buyer Name
-//     return pName.includes(searchTerm) || bName.includes(searchTerm);
-//   });
-
-//   renderAnalyticsTable(filtered);
-// }
-
-// // Global scope listener para sa Search Bar Input Field
-// document.addEventListener("DOMContentLoaded", () => {
-//   loadAnalyticsProducts();
-
-//   const searchInput = document.getElementById('tableSearchInput');
-//   if (searchInput) {
-//     searchInput.addEventListener('input', (e) => {
-//       filterProductsBySearch(e.target.value);
-//     });
-//   }
-// });
 import { db } from "../firebase.js";
 import { ref, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
@@ -311,7 +128,68 @@ function renderAnalyticsTable(productsList) {
 // ==========================================
 // 4. FIREBASE REAL-TIME LISTENER
 // ==========================================
+// export function loadAnalyticsProducts() {
+//   const productsRef = ref(db, 'products');
+
+//   onValue(productsRef, (snapshot) => {
+//     if (!snapshot.exists()) {
+//       allProductsCache = [];
+//       currentFilteredProducts = [];
+//       renderAnalyticsTable([]);
+//       return;
+//     }
+
+//     const data = snapshot.val();
+//     allProductsCache = Object.keys(data).map(key => ({
+//       id: key,
+//       ...data[key]
+//     }));
+
+//     currentFilteredProducts = [...allProductsCache];
+//     renderAnalyticsTable(allProductsCache);
+//   });
+// }
+// ==========================================
+// ELEGANT SKELETON LOADING HELPER
+// ==========================================
+function showAnalyticsLoading() {
+  const tbody = document.getElementById('analyticsList');
+  if (!tbody) return;
+
+  // Nagre-render ng 5 skeleton rows para punan ang table habang nag-aantay
+  let skeletonRows = '';
+  for (let i = 0; i < 5; i++) {
+    skeletonRows += `
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 80%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 60%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 70%;"></span>
+        </td>
+        <td style="padding: 10px 4px; text-align: center;">
+          <span class="skeleton-box" style="width: 50%;"></span>
+        </td>
+      </tr>
+    `;
+  }
+
+  tbody.innerHTML = skeletonRows;
+}
+
+// ==========================================
+// FIREBASE REAL-TIME LISTENER WITH LOADING
+// ==========================================
 export function loadAnalyticsProducts() {
+  // 1. Ipakita ang Gold Shimmer Skeleton
+  showAnalyticsLoading();
+
   const productsRef = ref(db, 'products');
 
   onValue(productsRef, (snapshot) => {
@@ -329,10 +207,23 @@ export function loadAnalyticsProducts() {
     }));
 
     currentFilteredProducts = [...allProductsCache];
+    
+    // 2. I-render ang mga totoong produkto (Papalitan agad nito ang skeleton rows)
     renderAnalyticsTable(allProductsCache);
+
+  }, (error) => {
+    console.error("Firebase fetch error:", error);
+    const tbody = document.getElementById('analyticsList');
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align: center; color: #ef4444; padding: 20px; font-size: 0.75rem;">
+            ⚠️ Failed to load analytics data.
+          </td>
+        </tr>`;
+    }
   });
 }
-
 // // ==========================================
 // // 5. SEARCH & STRICT ANALYZE TOGGLE
 // // ==========================================
