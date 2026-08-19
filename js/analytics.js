@@ -70,17 +70,6 @@ let currentMonthFilter = 'DEFAULT';
 // ==========================================
 // 2. LOAD & FILTER ANALYTICS DATA
 // ==========================================
-// function loadAnalyticsData() {
-//   const productsRef = ref(db, 'products');
-
-//   onValue(productsRef, (snapshot) => {
-//     const data = snapshot.val();
-//     productsDataStore = data || {};
-//     showAnalyticsLoading();
-//     // I-render ang talahanayan batay sa kasalukuyang filter
-//     renderAnalyticsTable();
-//   });
-// }
 function loadAnalyticsData() {
   // 1. IPAKITA AGAD ANG LOADING UI HABANG NAGHIHINTAY SA FIREBASE
   showAnalyticsLoading();
@@ -263,7 +252,6 @@ function renderAnalyticsTable() {
 }
 // Function para tawagin kapag nagpalit ng Month Filter sa UI
 function filterAnalyticsByMonth(monthValue) {
-  // monthValue input string format: '2026-08' o 'DEFAULT'
   currentMonthFilter = monthValue || 'DEFAULT';
   renderAnalyticsTable();
 }

@@ -4,10 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Overview - Gracious Line Gadgets</title>
+  <!-- Favicon / Tab Logo Image -->
+  <link rel="icon" type="image/jpeg" href="../img/gracious.jpg">
+  <link rel="apple-touch-icon" href="../img/gracious.jpg">
+
+  <!-- Open Graph Meta Tags (Para sa preview picture kapag inilink ang page) -->
+  <meta property="og:title" content="Analytics - Gracious Line Gadgets">
+  <meta property="og:description" content="Gadgets, Accessories, and Services Analytics Dashboard">
+  <meta property="og:image" content="../img/gracious.jpg">
+
+  <!-- Image Preload (Para mabilis mag-load ang logo image sa page) -->
+  <link rel="preload" as="image" href="../img/gracious.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/overview.css">
   <script type="module" src="../js/overview.js"></script>
-  <!-- <script>checkDashboardAuth();</script> -->
   <style>
     .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
     .table-responsive table { min-width: 550px; }
@@ -160,37 +170,14 @@
         
         <!-- Dynamic Dots & Tooltip Markers -->
         <g id="chartDotsGroup"></g>
-      </svg>
+        </svg>
 
-      <!-- Interactive Hover Tooltip Box -->
-      <div id="chartTooltip" style="position: absolute; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; background: #000; color: #fff; border: 1px solid var(--gold-primary, #e2b258); padding: 5px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transform: translate(-50%, -120%); z-index: 10;"></div>
-    </div>
-    <!-- Dynamic Month X-Axis Labels -->
-    <div id="chartXLabels" class="chart-labels-x" style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted, #a0a0a0); font-size: 0.75rem; font-weight: 600;"></div>
-    </div>
-
-
-        <!-- Mobile-Friendly Table -->
-        <!-- <div class="table-box">
-          <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">RECENT TRANSACTIONS LOG</h3>
-          <div class="table-responsive">
-            <table>
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Capital</th>
-                  <th>Selling Price</th>
-                  <th>Profit</th>
-                </tr>
-              </thead>
-              <tbody id="analyticsList">
-                <tr>
-                  <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading product records...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div> -->
+        <!-- Interactive Hover Tooltip Box -->
+        <div id="chartTooltip" style="position: absolute; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; background: #000; color: #fff; border: 1px solid var(--gold-primary, #e2b258); padding: 5px 9px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.5); transform: translate(-50%, -120%); z-index: 10;"></div>
+        </div>
+        <!-- Dynamic Month X-Axis Labels -->
+        <div id="chartXLabels" class="chart-labels-x" style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted, #a0a0a0); font-size: 0.75rem; font-weight: 600;"></div>
+        </div>
         
       </div>
   </div>
@@ -229,5 +216,7 @@
     </form>
   </div>
 </div>
+<script type="module" src="../js/authGuard.js"></script>
+<script type="module" src="../js/logoutModal.js"></script>
 </body>
 </html>

@@ -3,13 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orders - Gracious Line Gadgets</title>
+  <title>Paluwal - Gracious Line Gadgets</title>
+  <!-- Favicon / Tab Logo Image -->
+  <link rel="icon" type="image/jpeg" href="../img/gracious.jpg">
+  <link rel="apple-touch-icon" href="../img/gracious.jpg">
+
+  <!-- Open Graph Meta Tags (Para sa preview picture kapag inilink ang page) -->
+  <meta property="og:title" content="Paluwal - Gracious Line Gadgets">
+  <meta property="og:description" content="Gadgets, Accessories, and Services Analytics Dashboard">
+  <meta property="og:image" content="../img/gracious.jpg">
+
+  <!-- Image Preload (Para mabilis mag-load ang logo image sa page) -->
+  <link rel="preload" as="image" href="../img/gracious.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/order.css">
-  <style>
-    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .table-responsive table { min-width: 600px; }
-  </style>
 </head>
 <body>
 
@@ -27,7 +34,9 @@
         </div>
 
         <div class="user-info">
-          <span class="user-badge">👤 Logged in as: <strong id="userBadgeEmail">Admin</strong></span>
+           <button class="time-filter-btn active"  onclick="openPaluwalModal()"  style="cursor: pointer; font-weight: 700;">
+                ➕ ADD PALUWAL
+              </button>
           <button class="btn-logout" onclick="logout()">LOGOUT</button>
         </div>
       </div>
@@ -48,78 +57,218 @@
 
       <!-- Page Content -->
       <div class="table-box" style="margin-top: 0;">
-        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">PALUWAL</h3>
-        <div class="time-filter-group" style="display: flex; width: 100%; gap: 4px; box-sizing: border-box;">
+        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
+        <div class="time-filter-group">
           <a href="orders.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Inventory</a>
           
-          <a href="funds.html" class="time-filter-btn " style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a>
+          <a href="funds.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a>
           
           <a href="paluwal.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Paluwal</a>
           
           <a href="geremoney.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Geremie</a>
         </div>
 
-<!-- SEARCH & ANALYZE BAR CONTAINER -->
-<div style="margin-top: 20px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; width: 100%;">
-  <!-- Search Field -->
-  <input 
-    type="text" 
-    id="tableSearchInput" 
-    placeholder="🔍 Search product or customer..." 
-    style="flex: 1; padding: 8px 12px; font-size: clamp(0.75rem, 2vw, 0.85rem); background: #1a1a1a; color: #fff; border: 1px solid rgba(226, 178, 88, 0.3); border-radius: 6px; outline: none; box-sizing: border-box;"
-  />
-  
-  <!-- Analyze Button (Awtomatikong lalabas kapag may itinype) -->
-  <button 
-    id="analyzeSearchBtn" 
-    onclick="window.openSearchAnalyticsModal()" 
-    style="display: none; padding: 8px 12px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: clamp(0.7rem, 1.8vw, 0.8rem); cursor: pointer; white-space: nowrap;">
-    📊 Analyze
-  </button>
-</div>
+      
 
-<!-- FIXED HEIGHT & SCROLLABLE TABLE CONTAINER -->
-<div class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%;">
-  <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
-    <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
-      <tr>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Product</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Capital</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Selling</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Customer</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Avr Sold</th>
-      </tr>
-    </thead>
-    <tbody id="analyticsList">
-      <!-- Dynamic Rows via JS -->
-    </tbody>
-  </table>
-</div> <!-- Inilagay ang kulang na closing div tag dito -->
 
-<!-- ANALYTICS MODAL POPUP -->
-<div id="analyticsSummaryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
-  <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 420px; width: 100%; padding: 20px; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative;">
-    <!-- Close Button -->
-    <button onclick="window.closeAnalyticsModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
-    
-    <!-- Title matched to JS (analyticsModalTitle) -->
-    <h3 id="analyticsModalTitle" style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
-      📈 Search Analytics
-    </h3>
+      <!-- MAIN CONTAINER -->
+      <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 100%; box-sizing: border-box; font-family: sans-serif; overflow-x: hidden;">
 
-    <!-- Dynamic Content Body matched to JS (analyticsModalBody) -->
-    <div id="analyticsModalBody" style="font-size: 0.82rem; line-height: 1.6; margin-top: 10px;">
-      <!-- Dynamic Data Content from JavaScript -->
-    </div>
-  </div>
-</div>
+        <!-- ========================================== -->
+        <!-- ROW 1: GEREMIE PALUWAL -->
+        <!-- ========================================== -->
+        <div style="width: 100%;">
+          <div style="font-size: 0.75rem; font-weight: 800; color: #4ade80; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+            <span>👤 GEREMIE PALUWAL</span>
+          </div>
 
-        
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; box-sizing: border-box; align-items: stretch;">
+            
+            <!-- GEREMIE: PRODUCT MONEY -->
+            <div style="display: flex; flex-direction: column; height: 160px; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; background: #121212; box-sizing: border-box; overflow: hidden;">
+              <div style="display: flex; background: #181818; padding: 5px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem; color: #aaa; font-weight: 700;">
+                <div style="width: 60%; text-align: left;">PRODUCT MONEY</div>
+                <div style="width: 40%; text-align: right;">AMOUNT</div>
+              </div>
+              <div id="geremieProductMoneyList" style="flex: 1; overflow-y: auto; padding: 2px 0;"></div>
+              <div style="display: flex; background: #1a1a1a; padding: 5px 6px; border-top: 1.5px solid rgba(226, 178, 88, 0.5); font-size: 0.68rem; font-weight: 700;">
+                <div style="width: 50%; color: #fff; text-align: left;">TOTAL:</div>
+                <div id="totalGeremieProductMoney" style="width: 50%; color: #e2b258; text-align: right; font-weight: 800;">₱0</div>
+              </div>
+            </div>
+
+            <!-- GEREMIE: CAPITAL MONEY -->
+            <div style="display: flex; flex-direction: column; height: 160px; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; background: #121212; box-sizing: border-box; overflow: hidden;">
+              <div style="display: flex; background: #181818; padding: 5px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem; color: #aaa; font-weight: 700;">
+                <div style="width: 60%; text-align: left;">CAPITAL MONEY</div>
+                <div style="width: 40%; text-align: right;">AMOUNT</div>
+              </div>
+              <div id="geremieCapitalMoneyList" style="flex: 1; overflow-y: auto; padding: 2px 0;"></div>
+              <div style="display: flex; background: #1a1a1a; padding: 5px 6px; border-top: 1.5px solid rgba(226, 178, 88, 0.5); font-size: 0.68rem; font-weight: 700;">
+                <div style="width: 50%; color: #fff; text-align: left;">TOTAL:</div>
+                <div id="totalGeremieCapitalMoney" style="width: 50%; color: #e2b258; text-align: right; font-weight: 800;">₱0</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- ROW 2: JOHNDEL PALUWAL -->
+        <!-- ========================================== -->
+        <div style="width: 100%;">
+          <div style="font-size: 0.75rem; font-weight: 800; color: #60a5fa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 4px;">
+            <span>👤 JOHNDEL PALUWAL</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; box-sizing: border-box; align-items: stretch;">
+
+            <!-- JOHNDEL: PRODUCT MONEY -->
+            <div style="display: flex; flex-direction: column; height: 160px; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; background: #121212; box-sizing: border-box; overflow: hidden;">
+              <div style="display: flex; background: #181818; padding: 5px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem; color: #aaa; font-weight: 700;">
+                <div style="width: 60%; text-align: left;">PRODUCT MONEY</div>
+                <div style="width: 40%; text-align: right;">AMOUNT</div>
+              </div>
+              <div id="johndelProductMoneyList" style="flex: 1; overflow-y: auto; padding: 2px 0;"></div>
+              <div style="display: flex; background: #1a1a1a; padding: 5px 6px; border-top: 1.5px solid rgba(226, 178, 88, 0.5); font-size: 0.68rem; font-weight: 700;">
+                <div style="width: 50%; color: #fff; text-align: left;">TOTAL:</div>
+                <div id="totalJohndelProductMoney" style="width: 50%; color: #e2b258; text-align: right; font-weight: 800;">₱0</div>
+              </div>
+            </div>
+
+            <!-- JOHNDEL: CAPITAL MONEY -->
+            <div style="display: flex; flex-direction: column; height: 160px; width: 100%; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; background: #121212; box-sizing: border-box; overflow: hidden;">
+              <div style="display: flex; background: #181818; padding: 5px 6px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem; color: #aaa; font-weight: 700;">
+                <div style="width: 60%; text-align: left;">CAPITAL MONEY</div>
+                <div style="width: 40%; text-align: right;">AMOUNT</div>
+              </div>
+              <div id="johndelCapitalMoneyList" style="flex: 1; overflow-y: auto; padding: 2px 0;"></div>
+              <div style="display: flex; background: #1a1a1a; padding: 5px 6px; border-top: 1.5px solid rgba(226, 178, 88, 0.5); font-size: 0.68rem; font-weight: 700;">
+                <div style="width: 50%; color: #fff; text-align: left;">TOTAL:</div>
+                <div id="totalJohndelCapitalMoney" style="width: 50%; color: #e2b258; text-align: right; font-weight: 800;">₱0</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
 
+      <!-- ADD BUSINESS FUND MODAL -->
+      <div id="addPaluwalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
+        <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 380px; width: 100%; padding: 20px; color: #fff; position: relative;">
+          
+          <button onclick="closePaluwalModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
+          
+          <h3 style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+            💵 Add Paluwal Entry
+          </h3>
+
+          <form id="addPaluwalForm" onsubmit="savePaluwalEntry(event)" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+            
+            <!-- Select Person (Geremie vs Johndel) -->
+            <div>
+              <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Paluwal Owner</label>
+              <select id="paluwalPerson" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;">
+                <option value="geremie">Geremie</option>
+                <option value="johndel">Johndel</option>
+              </select>
+            </div>
+            <!-- Select Category (Add Money vs Less Money) -->
+            <div>
+              <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Category / Action</label>
+              <select id="paluwalCategory" onchange="togglePaluwalFields()" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;">
+                <option value="add" selected>Product Money</option>
+                <option value="less">Capital Money</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <input type="checkbox" id="paluwalIsLess" style="width: 16px; height: 16px; cursor: pointer;">
+              <label for="paluwalIsLess" style="color: #f87171; font-size: 0.6rem; font-weight: bold; cursor: pointer;">
+                Mark this box if the amount will less in the capital money
+              </label>
+            </div>
+            <!-- Amount Input -->
+            <div>
+              <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Amount (₱)</label>
+              <input type="number" id="paluwalAmount" placeholder="e.g. 1500" step="any" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+            </div>
+
+            <!-- Field for Add Money (Product) -->
+            <div id="productFieldGroup">
+              <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Product Name</label>
+              <input type="text" id="paluwalProduct" placeholder="e.g. iPhone 13 Pro" style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+            </div>
+
+            <!-- Field for Less Money (Details) -->
+            <div id="detailsFieldGroup" style="display: none;">
+              <label style="display: none; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Details / Note</label>
+              <textarea id="paluwalDetails" placeholder="e.g. Partial settlement deduction" rows="2" style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box; resize: none;"></textarea>
+            </div>
+
+            <!-- Date Input (Default: Today) -->
+            <div>
+              <label style="display: none; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Date</label>
+              <input type="date" id="paluwalDate" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" style="margin-top: 8px; padding: 10px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+              Save Paluwal Entry
+            </button>
+          </form>
+        </div>
+      </div>
+            <!-- Deletion Confirmation Modal -->
+      <div id="deleteConfirmModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 9999;">
+        <div style="background: #1e1e1e; border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 8px; width: 280px; text-align: center; color: #fff;">
+          <h3 style="margin-top: 0; font-size: 1rem; color: #f87171;">Confirm Action</h3>
+          <p style="font-size: 0.8rem; color: #ccc; margin-bottom: 20px;">Are you sure you want to delete this record? This action cannot be undone.</p>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="window.closeDeleteModal()" style="padding: 6px 14px; border: none; background: #444; color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+              Cancel
+            </button>
+            <button onclick="window.executeDeletePaluwal()" style="padding: 6px 14px; border: none; background: #f87171; color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- View Item Details Modal -->
+      <div id="viewDetailModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 9999;">
+        <div style="background: #1e1e1e; border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 8px; width: 270px; color: #fff;">
+          <h3 style="margin-top: 0; font-size: 0.9rem; color: #e2b258; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 12px;">Item Details</h3>
+          
+          <div style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+            <div>
+              <span style="color: #888;">Name / Details:</span>
+              <div id="viewItemName" style="color: #fff; font-weight: 600; word-break: break-word; margin-top: 2px;">-</div>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #888;">Amount:</span>
+              <span id="viewItemAmount" style="color: #4ade80; font-weight: bold;">₱0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #888;">User:</span>
+              <span id="viewItemPerson" style="color: #fff;">-</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #888;">Date:</span>
+              <span id="viewItemDate" style="color: #fff;">-</span>
+            </div>
+          </div>
+
+          <button onclick="window.closeViewDetailModal()" style="width: 100%; padding: 6px; border: none; background: #333; color: #fff; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">
+            Close
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-
-</body>
+<!-- Toast Notification Container -->
+<div id="toastContainer" class="toast-container"></div>
+<script type="module" src="../js/authGuard.js"></script>
+<script type="module" src="../js/logoutModal.js"></script>
 <script type="module" src="../js/paluwal.js"></script>
+</body>
 </html>

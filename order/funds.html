@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Analytics - Gracious Line Gadgets</title>
+  <title>Funds - Gracious Line Gadgets</title>
+  <!-- Favicon / Tab Logo Image -->
+  <link rel="icon" type="image/jpeg" href="../img/gracious.jpg">
+  <link rel="apple-touch-icon" href="../img/gracious.jpg">
+
+  <!-- Open Graph Meta Tags (Para sa preview picture kapag inilink ang page) -->
+  <meta property="og:title" content="Funds - Gracious Line Gadgets">
+  <meta property="og:description" content="Gadgets, Accessories, and Services Analytics Dashboard">
+  <meta property="og:image" content="../img/gracious.jpg">
+
+  <!-- Image Preload (Para mabilis mag-load ang logo image sa page) -->
+  <link rel="preload" as="image" href="../img/gracious.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/order.css">
 </head>
@@ -105,7 +116,18 @@
                 <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Date</label>
                 <input type="date" id="fundDate" required style="width: 100%; padding: 8px; background: #222; border: 1px solid #444; border-radius: 6px; color: #fff; font-size: 0.8rem; box-sizing: border-box;" />
               </div>
+              <!-- Checkboxes Block -->
+                <div style="display: flex; gap: 15px; margin: 10px 0; font-size: 0.8rem; color: #fff;">
+                  <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                    <input type="checkbox" id="fundIsNegative" checked />
+                    <span style="color: #f87171;">Less (-)</span>
+                  </label>
 
+                  <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                    <input type="checkbox" id="fundIsPositive" />
+                    <span style="color: #4ade80;">Add (+)</span>
+                  </label>
+                </div>
               <!-- Amount Input -->
               <div>
                 <label style="display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 4px;">Amount (₱)</label>
@@ -166,6 +188,8 @@
   </div>
 <!-- Toast Notification Container -->
 <div id="toastContainer" class="toast-container"></div>
+<script type="module" src="../js/authGuard.js"></script>
+<script type="module" src="../js/logoutModal.js"></script>
 <script type="module" src="../js/funds.js"></script>
 </body>
 </html>

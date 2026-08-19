@@ -1,60 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Gracious Line Gadgets</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gracious Line - Portal Login</title>
+  <link rel="stylesheet" href="/css/login.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <div class="container">
-    <div class="card">
+  <!-- Dynamic Ambient Glow Effects -->
+  <div class="glow-orb orb-gold"></div>
+  <div class="glow-orb orb-red"></div>
+
+  <!-- Offline Banner -->
+  <div id="offlineBar" class="offline-banner">
+    <span class="offline-icon">⚠️</span>
+    <span>No internet connection detected. Please check your network.</span>
+  </div>
+
+  <div class="portal-container">
+    <div class="login-card">
       
-      <!-- Brand Circuit Header with Image Logo -->
-      <div class="circuit-header">
-        <img src="gracious.jpg" alt="Gracious Line Logo" class="brand-logo" onerror="this.style.display='none'">
-        <h1 class="brand-title">Gracious Line</h1>
-        <div class="brand-subtitle">GADGETS, ACCESSORIES, AND SERVICES</div>
-        <div class="brand-est">Est. 2024</div>
+      <!-- Top Brand Section -->
+      <div class="brand-section">
+        <div class="logo-emblem-container">
+          <div class="emblem-glow-ring"></div>
+          <img src="img/gracious.jpg" alt="Gracious Line Logo" class="brand-logo-img" />
+        </div>
+        
+        <h1 class="brand-name">GRACIOUS LINE</h1>
+        <p class="brand-tagline">GADGETS, ACCESSORIES & SERVICES</p>
+        <span class="est-badge">EST. 2024</span>
       </div>
 
-      <div class="form-title">SIGN IN TO YOUR ACCOUNT</div>
-
-      <!-- Alert Notification -->
-      <div id="alertBox" class="alert-box"></div>
-
-      <!-- Login Form -->
-      <form id="loginForm" onsubmit="handleLogin(event)">
+      <!-- Form Interface -->
+      <form id="loginForm" class="auth-form" onsubmit="event.preventDefault();">
+        
+        <!-- Email Input -->
         <div class="form-group">
           <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="enter your email..." required>
+          <div class="input-container">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="loginEmail" placeholder="admin@graciousline.com" required autocomplete="off" />
+          </div>
         </div>
 
+        <!-- Password Input -->
         <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+          <div class="label-row">
+            <label for="loginPassword">Password</label>
+            <a href="/register/reset-password.html" class="forgot-pass-link">Forgot?</a>
+          </div>
+          <div class="input-container">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="loginPassword" placeholder="••••••••••••" required />
+            <button type="button" class="eye-toggle-btn" onclick="togglePasswordVisibility('loginPassword', this)">
+              👁️
+            </button>
+          </div>
         </div>
 
-        <button type="submit" class="btn-gold">SIGN IN</button>
+        <!-- Submit Button -->
+        <button type="submit" id="btnLoginSubmit" class="btn-login">
+          <span id="btnLoginSpinner" class="btn-spinner" style="display: none;"></span>
+          <span id="btnLoginText">SIGN IN TO SYSTEM</span>
+        </button>
+
       </form>
 
-      <div class="link-text">
-        <a href="#">Forgot Password?</a>
-      </div>
-
-      <div class="link-text" style="margin-top: 12px;">
-        Don't have an account? <a href="register.html">REGISTER HERE</a>
+      <!-- Footer Info -->
+      <div class="login-footer">
+        <p>&copy; 2026 Gracious Line. All Rights Reserved.</p>
       </div>
 
     </div>
   </div>
 
-  <script src="script.js"></script>
-  <script>
-    // Redirect to dashboard if already logged in
-    checkLoginAuth();
-  </script>
+  <!-- ES Module script for Firebase -->
+  <script type="module" src="/js/login-ui.js"></script>
 </body>
 </html>

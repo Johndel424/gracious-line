@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Gracious Line Gadgets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div class="container">
+  <!-- Skeleton Loader (Lalabas habang hindi pa ready ang form) -->
+  <div id="cardSkeleton" class="card" style="display: none;">
+    <div class="skeleton-circle" style="width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite;"></div>
+    <div class="skeleton-line" style="width: 60%; height: 14px; margin: 0 auto 15px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px;"></div>
+    <div class="skeleton-line" style="width: 100%; height: 30px; margin-bottom: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px;"></div>
+    <div class="skeleton-line" style="width: 100%; height: 30px; margin-bottom: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px;"></div>
+    <div class="skeleton-line" style="width: 100%; height: 30px; margin-bottom: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px;"></div>
+  </div>
+
+  <!-- Main Card Container -->
+  <div id="mainCard" class="card">
+    
+    <!-- Brand Circuit Header with Image Logo -->
+    <div class="circuit-header">
+      <img src="gracious.jpg" alt="Gracious Line Logo" class="brand-logo" onerror="this.style.display='none'">
+      <h1 class="brand-title">Gracious Line</h1>
+      <div class="brand-subtitle">GADGETS, ACCESSORIES, AND SERVICES</div>
+      <div class="brand-est">Est. 2024</div>
+    </div>
+
+    <div class="form-title">CREATE NEW ACCOUNT</div>
+
+    <!-- Registration Form -->
+    <form id="registerForm" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label for="regName">Full Name</label>
+        <input type="text" id="regName" class="form-control" placeholder="Juan Dela Cruz" required>
+      </div>
+
+      <div class="form-group">
+        <label for="regEmail">Email Address</label>
+        <input type="email" id="regEmail" class="form-control" placeholder="name@email.com" required>
+      </div>
+
+      <!-- Password Input with Toggle -->
+      <div class="form-group">
+        <label for="regPassword">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="regPassword" class="form-control" placeholder="••••••••" required oninput="validatePasswords()">
+          <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('regPassword', this)">
+            👁️
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirm Password Input with Toggle -->
+      <div class="form-group">
+        <label for="regConfirmPassword">Confirm Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="regConfirmPassword" class="form-control" placeholder="••••••••" required oninput="validatePasswords()">
+          <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('regConfirmPassword', this)">
+            👁️
+          </button>
+        </div>
+        <!-- Live Match / Not Match Status Message -->
+        <div id="passwordMatchMsg" class="pass-match-msg"></div>
+      </div>
+
+      <!-- Submit Button with Spinner Support -->
+      <button type="submit" id="btnSubmit" class="btn-gold">
+        <span id="btnText">CREATE ACCOUNT</span>
+        <span id="btnSpinner" class="spinner" style="display: none;"></span>
+      </button>
+    </form>
+
+    <div class="link-text">
+      Already have an account? <a href="../index.html">SIGN IN</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Compact CSS -->
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #121212;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .card {
+    background: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 14px 18px;
+    width: 100%;
+    max-width: 310px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-align: center;
+  }
+
+  .circuit-header {
+    margin-bottom: 6px;
+  }
+
+  .brand-logo {
+    max-height: 32px;
+    margin-bottom: 2px;
+  }
+
+  .brand-title {
+    font-size: 1.05rem;
+    margin: 0;
+    color: #e2b258;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .brand-subtitle {
+    font-size: 0.48rem;
+    color: #aaa;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-est {
+    font-size: 0.45rem;
+    color: #666;
+  }
+
+  .form-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin: 6px 0 6px 0;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group {
+    text-align: left;
+    margin-bottom: 6px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.60rem;
+    color: #bbb;
+    margin-bottom: 2px;
+  }
+
+  .password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 6px 28px 6px 8px; /* May space sa kanan para sa eye icon */
+    font-size: 0.70rem;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #fff;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-control:focus {
+    border-color: #e2b258;
+  }
+
+  .btn-toggle-pass {
+    position: absolute;
+    right: 6px;
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 0.70rem;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pass-match-msg {
+    font-size: 0.55rem;
+    margin-top: 2px;
+    min-height: 12px;
+  }
+
+  .btn-gold {
+    width: 100%;
+    padding: 8px;
+    margin-top: 6px;
+    background: #e2b258;
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    font-weight: bold;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-gold:hover {
+    opacity: 0.9;
+  }
+
+  .btn-gold:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .link-text {
+    font-size: 0.62rem;
+    color: #aaa;
+    margin-top: 8px;
+  }
+
+  .link-text a {
+    color: #e2b258;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  /* Spinner and Skeleton Animations */
+  .spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-top: 2px solid #000;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+</style>
+
+<!-- Registration & Dynamic JavaScript -->
+<script type="module">
+  import { db } from "../firebase.js";
+  import { ref, push } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+  // 1. Toggle Show / Hide Password Function
+  window.togglePasswordVisibility = function(inputId, btnEl) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      btnEl.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      btnEl.textContent = '👁️';
+    }
+  };
+
+  // 2. Realtime Password Live Match Check
+  window.validatePasswords = function() {
+    const pass = document.getElementById('regPassword').value;
+    const confirmPass = document.getElementById('regConfirmPassword').value;
+    const msgEl = document.getElementById('passwordMatchMsg');
+
+    if (!confirmPass) {
+      msgEl.textContent = '';
+      return;
+    }
+
+    if (pass === confirmPass) {
+      msgEl.textContent = '✓ Passwords match';
+      msgEl.style.color = '#4ade80';
+    } else {
+      msgEl.textContent = '✕ Passwords do not match';
+      msgEl.style.color = '#f87171';
+    }
+  };
+
+  // 3. Form Submit Handler with Loading State
+  window.handleRegister = async function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnText = document.getElementById('btnText');
+    const btnSpinner = document.getElementById('btnSpinner');
+
+    // Password Validations
+    if (password !== confirmPassword) {
+      if (typeof showToast === 'function') {
+        showToast("Passwords do not match!", "error");
+      } else {
+        alert("Passwords do not match!");
+      }
+      return;
+    }
+
+    if (password.length < 6) {
+      if (typeof showToast === 'function') {
+        showToast("Password must be at least 6 characters.", "error");
+      } else {
+        alert("Password must be at least 6 characters.");
+      }
+      return;
+    }
+
+    try {
+      // Show Loading Spinner State
+      btnSubmit.disabled = true;
+      btnText.textContent = "CREATING...";
+      btnSpinner.style.display = "inline-block";
+
+      const usersRef = ref(db, 'users');
+      await push(usersRef, {
+        fullName: name,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+      });
+
+      if (typeof showToast === 'function') {
+        showToast("Account created successfully!", "success");
+      } else {
+        alert("Account created successfully!");
+      }
+
+      document.getElementById('registerForm').reset();
+      document.getElementById('passwordMatchMsg').textContent = '';
+
+      setTimeout(() => {
+        window.location.href = "../overview/overview.html";
+      }, 1200);
+
+    } catch (err) {
+      console.error("❌ Registration Error:", err);
+      if (typeof showToast === 'function') {
+        showToast("Failed to create account.", "error");
+      } else {
+        alert("Failed to create account.");
+      }
+    } finally {
+      // Reset Button State
+      btnSubmit.disabled = false;
+      btnText.textContent = "CREATE ACCOUNT";
+      btnSpinner.style.display = "none";
+    }
+  };
+</script>
+</body>
+</html>

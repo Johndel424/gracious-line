@@ -125,30 +125,7 @@ function renderAnalyticsTable(productsList) {
   tbody.innerHTML = htmlContent;
 }
 
-// ==========================================
-// 4. FIREBASE REAL-TIME LISTENER
-// ==========================================
-// export function loadAnalyticsProducts() {
-//   const productsRef = ref(db, 'products');
 
-//   onValue(productsRef, (snapshot) => {
-//     if (!snapshot.exists()) {
-//       allProductsCache = [];
-//       currentFilteredProducts = [];
-//       renderAnalyticsTable([]);
-//       return;
-//     }
-
-//     const data = snapshot.val();
-//     allProductsCache = Object.keys(data).map(key => ({
-//       id: key,
-//       ...data[key]
-//     }));
-
-//     currentFilteredProducts = [...allProductsCache];
-//     renderAnalyticsTable(allProductsCache);
-//   });
-// }
 // ==========================================
 // ELEGANT SKELETON LOADING HELPER
 // ==========================================
@@ -224,40 +201,7 @@ export function loadAnalyticsProducts() {
     }
   });
 }
-// // ==========================================
-// // 5. SEARCH & STRICT ANALYZE TOGGLE
-// // ==========================================
-// export function filterProductsBySearch(query) {
-//   const searchTerm = query.toLowerCase().trim();
-//   const analyzeBtn = document.getElementById('analyzeSearchBtn');
 
-//   if (!searchTerm) {
-//     currentFilteredProducts = [...allProductsCache];
-//     renderAnalyticsTable(allProductsCache);
-//     if (analyzeBtn) analyzeBtn.style.display = "none";
-//     return;
-//   }
-
-//   // Filter products by product name or buyer name
-//   currentFilteredProducts = allProductsCache.filter(item => {
-//     const pName = (item.productName || '').toLowerCase();
-//     const bName = (item.buyerName || '').toLowerCase();
-//     return pName.includes(searchTerm) || bName.includes(searchTerm);
-//   });
-
-//   renderAnalyticsTable(currentFilteredProducts);
-
-//   // STRICT ANALYZE RULE CHECKING:
-//   // 1. Must match EXACT product name (case-insensitive)
-//   // 2. Will NOT activate if searching for buyer names
-//   const isExactProductName = allProductsCache.some(
-//     item => (item.productName || '').trim().toLowerCase() === searchTerm
-//   );
-
-//   if (analyzeBtn) {
-//     analyzeBtn.style.display = isExactProductName ? "inline-block" : "none";
-//   }
-// }
 // ==========================================
 // 5. SEARCH & STRICT SPEC MATCHING TOGGLE
 // ==========================================
@@ -468,3 +412,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+

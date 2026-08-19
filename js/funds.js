@@ -413,16 +413,41 @@ function setupAddFundForm() {
   const form = document.getElementById('addFundForm');
   if (!form) return;
 
+  const chkPositive = document.getElementById('fundIsPositive');
+  const chkNegative = document.getElementById('fundIsNegative');
+
+  // Toggle behavior: Siguraduhing isa lang ang pwedeng mai-check
+  if (chkPositive && chkNegative) {
+    chkPositive.addEventListener('change', () => {
+      if (chkPositive.checked) chkNegative.checked = false;
+      else chkNegative.checked = true; // Fallback para laging may napili
+    });
+
+    chkNegative.addEventListener('change', () => {
+      if (chkNegative.checked) chkPositive.checked = false;
+      else chkPositive.checked = true;
+    });
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const dateVal = document.getElementById('fundDate').value;
-    const amountVal = parseFloat(document.getElementById('fundAmount').value);
+    let amountVal = parseFloat(document.getElementById('fundAmount').value);
     const detailsVal = document.getElementById('fundDetails').value.trim();
 
     if (!dateVal || isNaN(amountVal) || !detailsVal) {
       alert("Please fill in all fields correctly.");
       return;
+    }
+
+    // Siguraduhing positive muna ang kinuhang number
+    amountVal = Math.abs(amountVal);
+
+    // Kapag naka-check ang Negative, imumultiply sa -1 para maging negative
+    const isNegative = chkNegative ? chkNegative.checked : true;
+    if (isNegative) {
+      amountVal = -amountVal;
     }
 
     try {
@@ -435,13 +460,18 @@ function setupAddFundForm() {
       });
 
       window.closeAddFundModal();
+      form.reset();
+
+      // I-reset pabalik sa DEFAULT (Negative = checked, Positive = unchecked)
+      if (chkNegative) chkNegative.checked = true;
+      if (chkPositive) chkPositive.checked = false;
+
     } catch (err) {
       console.error("Error adding business fund:", err);
       alert("Failed to save entry. Please try again.");
     }
   });
 }
-
 // ==========================================
 // 6. INITIALIZATION
 // ==========================================

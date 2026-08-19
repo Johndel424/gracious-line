@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Orders - Gracious Line Gadgets</title>
+  <!-- Favicon / Tab Logo Image -->
+  <link rel="icon" type="image/jpeg" href="../img/gracious.jpg">
+  <link rel="apple-touch-icon" href="../img/gracious.jpg">
+
+  <!-- Open Graph Meta Tags (Para sa preview picture kapag inilink ang page) -->
+  <meta property="og:title" content="Orders - Gracious Line Gadgets">
+  <meta property="og:description" content="Gadgets, Accessories, and Services Analytics Dashboard">
+  <meta property="og:image" content="../img/gracious.jpg">
+
+  <!-- Image Preload (Para mabilis mag-load ang logo image sa page) -->
+  <link rel="preload" as="image" href="../img/gracious.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/order.css">
   <style>
@@ -59,67 +70,66 @@
           <a href="geremoney.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Geremie</a>
         </div>
 
-<!-- SEARCH & ANALYZE BAR CONTAINER -->
-<div style="margin-top: 20px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; width: 100%;">
-  <!-- Search Field -->
-  <input 
-    type="text" 
-    id="tableSearchInput" 
-    placeholder="🔍 Search product or customer..." 
-    style="flex: 1; padding: 8px 12px; font-size: clamp(0.75rem, 2vw, 0.85rem); background: #1a1a1a; color: #fff; border: 1px solid rgba(226, 178, 88, 0.3); border-radius: 6px; outline: none; box-sizing: border-box;"
-  />
-  
-  <!-- Analyze Button (Awtomatikong lalabas kapag may itinype) -->
-  <button 
-    id="analyzeSearchBtn" 
-    onclick="window.openSearchAnalyticsModal()" 
-    style="display: none; padding: 8px 12px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: clamp(0.7rem, 1.8vw, 0.8rem); cursor: pointer; white-space: nowrap;">
-    📊 Analyze
-  </button>
-</div>
-
-<!-- FIXED HEIGHT & SCROLLABLE TABLE CONTAINER -->
-<div class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%;">
-  <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
-    <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
-      <tr>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Product</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Capital</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Selling</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Customer</th>
-        <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Avr Sold</th>
-      </tr>
-    </thead>
-    <tbody id="analyticsList">
-      <!-- Dynamic Rows via JS -->
-    </tbody>
-  </table>
-</div>
-
-<!-- ANALYTICS MODAL POPUP -->
-<div id="analyticsSummaryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
-  <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 420px; width: 100%; padding: 20px; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative;">
-    <!-- Close Button -->
-    <button onclick="window.closeAnalyticsModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
-    
-    <!-- Title matched to JS (analyticsModalTitle) -->
-    <h3 id="analyticsModalTitle" style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
-      📈 Search Analytics
-    </h3>
-
-    <!-- Dynamic Content Body matched to JS (analyticsModalBody) -->
-    <div id="analyticsModalBody" style="font-size: 0.82rem; line-height: 1.6; margin-top: 10px;">
-      <!-- Dynamic Data Content from JavaScript -->
-    </div>
-  </div>
-</div>
-
+      <!-- SEARCH & ANALYZE BAR CONTAINER -->
+      <div style="margin-top: 20px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; width: 100%;">
+        <!-- Search Field -->
+        <input 
+          type="text" 
+          id="tableSearchInput" 
+          placeholder="🔍 Search product or customer..." 
+          style="flex: 1; padding: 8px 12px; font-size: clamp(0.75rem, 2vw, 0.85rem); background: #1a1a1a; color: #fff; border: 1px solid rgba(226, 178, 88, 0.3); border-radius: 6px; outline: none; box-sizing: border-box;"
+        />
         
+        <!-- Analyze Button (Awtomatikong lalabas kapag may itinype) -->
+        <button 
+          id="analyzeSearchBtn" 
+          onclick="window.openSearchAnalyticsModal()" 
+          style="display: none; padding: 8px 12px; background: var(--gold-primary, #e2b258); color: #000; font-weight: 700; border: none; border-radius: 6px; font-size: clamp(0.7rem, 1.8vw, 0.8rem); cursor: pointer; white-space: nowrap;">
+          📊 Analyze
+        </button>
+      </div>
+
+      <!-- FIXED HEIGHT & SCROLLABLE TABLE CONTAINER -->
+      <div class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%;">
+        <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+          <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
+            <tr>
+              <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Product</th>
+              <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Capital</th>
+              <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Selling</th>
+              <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Customer</th>
+              <th style="width: 20%; padding: 6px 2px; font-size: 0.7rem; text-align: center;">Avr Sold</th>
+            </tr>
+          </thead>
+          <tbody id="analyticsList">
+            <!-- Dynamic Rows via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ANALYTICS MODAL POPUP -->
+      <div id="analyticsSummaryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box;">
+        <div style="background: #181818; border: 1px solid rgba(226, 178, 88, 0.4); border-radius: 12px; max-width: 420px; width: 100%; padding: 20px; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.8); position: relative;">
+          <!-- Close Button -->
+          <button onclick="window.closeAnalyticsModal()" style="position: absolute; top: 12px; right: 12px; background: transparent; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
+          
+          <!-- Title matched to JS (analyticsModalTitle) -->
+          <h3 id="analyticsModalTitle" style="margin-top: 0; color: var(--gold-primary, #e2b258); font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+            📈 Search Analytics
+          </h3>
+
+          <!-- Dynamic Content Body matched to JS (analyticsModalBody) -->
+          <div id="analyticsModalBody" style="font-size: 0.82rem; line-height: 1.6; margin-top: 10px;">
+            <!-- Dynamic Data Content from JavaScript -->
+          </div>
+        </div>
+      </div>
       </div>
 
     </div>
   </div>
-
 </body>
 <script type="module" src="../js/order.js"></script>
+<script type="module" src="../js/authGuard.js"></script>
+<script type="module" src="../js/logoutModal.js"></script>
 </html>

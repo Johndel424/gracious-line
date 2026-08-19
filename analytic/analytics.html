@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analytics - Gracious Line Gadgets</title>
+
+  <!-- Favicon / Tab Logo Image -->
+  <link rel="icon" type="image/jpeg" href="../img/gracious.jpg">
+  <link rel="apple-touch-icon" href="../img/gracious.jpg">
+
+  <!-- Open Graph Meta Tags (Para sa preview picture kapag inilink ang page) -->
+  <meta property="og:title" content="Analytics - Gracious Line Gadgets">
+  <meta property="og:description" content="Gadgets, Accessories, and Services Analytics Dashboard">
+  <meta property="og:image" content="../img/gracious.jpg">
+
+  <!-- Image Preload (Para mabilis mag-load ang logo image sa page) -->
+  <link rel="preload" as="image" href="../img/gracious.jpg">
+
+  <!-- Fonts & Stylesheets -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/analytics.css">
 </head>
@@ -80,140 +94,143 @@
       </div>
     </div>
 
-<!-- 1. POP-UP MODAL FOR PRODUCT DETAILS (SLIM & COMPACT VERSION) -->
-<div id="productDetailModal" class="modal-overlay" style="display: none;">
-  <div class="modal-card" style="padding: 14px; max-width: 380px;">
-    <div class="modal-header" style="margin-bottom: 8px;">
-      <h3 style="color: var(--gold-primary); margin: 0; font-size: 0.95rem;">📱 PRODUCT FULL DETAILS</h3>
-      <span class="modal-close" onclick="closeProductDetailModal()" style="font-size: 1.1rem;">&times;</span>
+    <!-- 1. POP-UP MODAL FOR PRODUCT DETAILS (SLIM & COMPACT VERSION) -->
+    <div id="productDetailModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card" style="padding: 14px; max-width: 380px;">
+        <div class="modal-header" style="margin-bottom: 8px;">
+          <h3 style="color: var(--gold-primary); margin: 0; font-size: 0.95rem;">📱 PRODUCT FULL DETAILS</h3>
+          <span class="modal-close" onclick="closeProductDetailModal()" style="font-size: 1.1rem;">&times;</span>
+        </div>
+        
+        <div class="modal-body" style="gap: 8px;">
+          <!-- Header Info & Dates -->
+          <div style="border-bottom: 1px solid rgba(226, 178, 88, 0.15); padding-bottom: 6px;">
+            <h4 id="modalProdName" style="color: #fff; font-size: 0.95rem; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</h4>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted);">
+              <span id="modalDateAdded">Added: -</span>
+              <span>Sold: <span id="modalDateSold" style="color: #fff; font-weight: 500;">-</span></span>
+            </div>
+          </div>
+
+          <!-- Details Grid inside Modal (SLIM EQUAL GRID) -->
+          <div class="details-grid-slim">
+            <div class="detail-item-slim">
+              <span class="label">Buy Price</span>
+              <span id="modalBuyPrice" class="val" style="color: #fff;">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Selling Price</span>
+              <span id="modalSellingPrice" class="val" style="color: var(--gold-primary);">-</span>
+            </div>
+            
+            <div class="detail-item-slim">
+              <span class="label">Profit</span>
+              <span id="modalProfit" class="val" style="color: #4ade80;">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Expenses</span>
+              <span id="modalExpenses" class="val" style="color: #f87171;">-</span>
+            </div>
+            
+            <!-- Profit Split (4 Shares: Pantay na 2x2 Layout) -->
+            <div class="detail-item-slim">
+              <span class="label">Johndel (30%)</span>
+              <span id="modalJohndel" class="val">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Geremie (30%)</span>
+              <span id="modalGeremie" class="val">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Clicky (10%)</span>
+              <span id="modalClicky" class="val">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Business Fund (30%)</span>
+              <span id="modalBusinessFund" class="val" style="color: var(--gold-primary);">-</span>
+            </div>
+            
+            <!-- Buyer Info -->
+            
+            <div class="detail-item-slim">
+              <span class="label">Buyer Contact</span>
+              <span id="modalBuyerContact" class="val">-</span>
+            </div>
+            <div class="detail-item-slim">
+              <span class="label">Buyer FB Link</span>
+              <span id="modalBuyerFb" class="val">-</span>
+            </div>
+            <div class="detail-item-slim" style="grid-column: span 2;">
+              <span class="label">Buyer Name</span>
+              <span id="modalBuyerName" class="val">-</span>
+            </div>
+          </div>
+
+          <!-- Modal Actions (Slim Buttons) -->
+          <div class="modal-footer" style="margin-top: 10px; display: flex; gap: 6px;">
+            <button type="button" class="btn-logout" style="background: #dc2626; border-color: #ef4444; color: #fff; padding: 6px 10px; font-size: 0.75rem;" onclick="handleDeleteProduct()">🗑️ DELETE</button>
+            <button type="button" id="btnMarkAsSold" class="time-filter-btn active" style="font-weight: 700; flex: 1; padding: 6px 10px; font-size: 0.75rem;" onclick="openSellModal()">🏷️ MARK AS SOLD</button>
+            <button type="button" class="btn-logout" style="padding: 6px 10px; font-size: 0.75rem;" onclick="closeProductDetailModal()">CLOSE</button>
+          </div>
+        </div>
+      </div>
     </div>
-    
-    <div class="modal-body" style="gap: 8px;">
-      <!-- Header Info & Dates -->
-      <div style="border-bottom: 1px solid rgba(226, 178, 88, 0.15); padding-bottom: 6px;">
-        <h4 id="modalProdName" style="color: #fff; font-size: 0.95rem; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</h4>
+    <!-- CUSTOM FB LINK POPUP MODAL -->
+    <div id="fbLinkModal" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+      <div style="background: #181818; border: 1px solid var(--border-gold, #e2b258); border-radius: 12px; padding: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <h4 style="color: var(--gold-primary, #e2b258); margin-top: 0; margin-bottom: 12px; font-size: 1rem;">🔗 Facebook Link</h4>
         
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text-muted);">
-          <span id="modalDateAdded">Added: -</span>
-          <span>Sold: <span id="modalDateSold" style="color: #fff; font-weight: 500;">-</span></span>
-        </div>
-      </div>
-
-      <!-- Details Grid inside Modal (SLIM EQUAL GRID) -->
-      <div class="details-grid-slim">
-        <div class="detail-item-slim">
-          <span class="label">Buy Price</span>
-          <span id="modalBuyPrice" class="val" style="color: #fff;">-</span>
-        </div>
-        <div class="detail-item-slim">
-          <span class="label">Selling Price</span>
-          <span id="modalSellingPrice" class="val" style="color: var(--gold-primary);">-</span>
-        </div>
+        <input type="text" id="fbModalInput" readonly style="width: 100%; background: #101010; border: 1px solid #333; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box; margin-bottom: 15px;">
         
-        <div class="detail-item-slim">
-          <span class="label">Profit</span>
-          <span id="modalProfit" class="val" style="color: #4ade80;">-</span>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button type="button" onclick="copyFbLinkFromModal()" style="background: var(--gold-primary, #e2b258); color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">📋 Copy</button>
+          <a id="fbModalOpenBtn" href="#" target="_blank" style="background: #252525; color: #fff; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; display: inline-block; align-content: center;">🌐 Visit</a>
+          <button type="button" onclick="closeFbLinkModal()" style="background: transparent; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Close</button>
         </div>
-        <div class="detail-item-slim">
-          <span class="label">Expenses</span>
-          <span id="modalExpenses" class="val" style="color: #f87171;">-</span>
-        </div>
-        
-        <!-- Profit Split (4 Shares: Pantay na 2x2 Layout) -->
-        <div class="detail-item-slim">
-          <span class="label">Johndel (30%)</span>
-          <span id="modalJohndel" class="val">-</span>
-        </div>
-        <div class="detail-item-slim">
-          <span class="label">Geremie (30%)</span>
-          <span id="modalGeremie" class="val">-</span>
-        </div>
-        <div class="detail-item-slim">
-          <span class="label">Clicky (10%)</span>
-          <span id="modalClicky" class="val">-</span>
-        </div>
-        <div class="detail-item-slim">
-          <span class="label">Business Fund (30%)</span>
-          <span id="modalBusinessFund" class="val" style="color: var(--gold-primary);">-</span>
-        </div>
-        
-        <!-- Buyer Info -->
-        
-        <div class="detail-item-slim">
-          <span class="label">Buyer Contact</span>
-          <span id="modalBuyerContact" class="val">-</span>
-        </div>
-        <div class="detail-item-slim">
-          <span class="label">Buyer FB Link</span>
-          <span id="modalBuyerFb" class="val">-</span>
-        </div>
-        <div class="detail-item-slim" style="grid-column: span 2;">
-          <span class="label">Buyer Name</span>
-          <span id="modalBuyerName" class="val">-</span>
-        </div>
-      </div>
-
-      <!-- Modal Actions (Slim Buttons) -->
-      <div class="modal-footer" style="margin-top: 10px; display: flex; gap: 6px;">
-        <button type="button" class="btn-logout" style="background: #dc2626; border-color: #ef4444; color: #fff; padding: 6px 10px; font-size: 0.75rem;" onclick="handleDeleteProduct()">🗑️ DELETE</button>
-        <button type="button" id="btnMarkAsSold" class="time-filter-btn active" style="font-weight: 700; flex: 1; padding: 6px 10px; font-size: 0.75rem;" onclick="openSellModal()">🏷️ MARK AS SOLD</button>
-        <button type="button" class="btn-logout" style="padding: 6px 10px; font-size: 0.75rem;" onclick="closeProductDetailModal()">CLOSE</button>
       </div>
     </div>
-  </div>
-</div>
-<!-- CUSTOM FB LINK POPUP MODAL -->
-<div id="fbLinkModal" class="modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
-  <div style="background: #181818; border: 1px solid var(--border-gold, #e2b258); border-radius: 12px; padding: 20px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-    <h4 style="color: var(--gold-primary, #e2b258); margin-top: 0; margin-bottom: 12px; font-size: 1rem;">🔗 Facebook Link</h4>
-    
-    <input type="text" id="fbModalInput" readonly style="width: 100%; background: #101010; border: 1px solid #333; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; box-sizing: border-box; margin-bottom: 15px;">
-    
-    <div style="display: flex; gap: 8px; justify-content: flex-end;">
-      <button type="button" onclick="copyFbLinkFromModal()" style="background: var(--gold-primary, #e2b258); color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">📋 Copy</button>
-      <a id="fbModalOpenBtn" href="#" target="_blank" style="background: #252525; color: #fff; text-decoration: none; padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; display: inline-block; align-content: center;">🌐 Visit</a>
-      <button type="button" onclick="closeFbLinkModal()" style="background: transparent; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Close</button>
+    <!-- 2. NEW POP-UP MODAL FOR MARK AS SOLD -->
+    <!-- POP-UP MODAL FOR MARK AS SOLD -->
+    <div id="sellProductModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 style="color: var(--gold-primary); margin: 0; font-size: 1.1rem;">💰 MARK PRODUCT AS SOLD</h3>
+          <span class="modal-close" onclick="closeSellModal()">&times;</span>
+        </div>
+
+        <form id="sellProductForm" onsubmit="handleSellSubmit(event)" class="modal-body">
+          <!-- Date Sold (Default to Today) -->
+          <div class="form-group">
+            <label>Sold <span style="color: #f87171;">*Required</span></label>
+            <input type="date" id="sellDate" required style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box; outline: none;">
+          </div>
+
+          <div class="form-group">
+            <label>Selling Price (₱) <span style="color: #f87171;">*Required</span></label>
+            <input type="number" id="sellPrice" placeholder="e.g. 50000" step="0.01" required>
+          </div>
+
+          <div class="form-group">
+            <label>Expenses (₱)</label>
+            <input type="number" id="sellExpenses" placeholder="e.g. 0" step="0.01" value="0">
+          </div>
+
+          <div class="modal-footer" style="margin-top: 10px;">
+            <button type="button" class="btn-logout" onclick="closeSellModal()">CANCEL</button>
+            <button type="submit" class="time-filter-btn active" style="font-weight: 700;">CONFIRM SALE</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-</div>
-<!-- 2. NEW POP-UP MODAL FOR MARK AS SOLD -->
-<!-- POP-UP MODAL FOR MARK AS SOLD -->
-<div id="sellProductModal" class="modal-overlay" style="display: none;">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3 style="color: var(--gold-primary); margin: 0; font-size: 1.1rem;">💰 MARK PRODUCT AS SOLD</h3>
-      <span class="modal-close" onclick="closeSellModal()">&times;</span>
-    </div>
-
-    <form id="sellProductForm" onsubmit="handleSellSubmit(event)" class="modal-body">
-      <!-- Date Sold (Default to Today) -->
-      <div class="form-group">
-        <label>Sold <span style="color: #f87171;">*Required</span></label>
-        <input type="date" id="sellDate" required style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 8px; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box; outline: none;">
-      </div>
-
-      <div class="form-group">
-        <label>Selling Price (₱) <span style="color: #f87171;">*Required</span></label>
-        <input type="number" id="sellPrice" placeholder="e.g. 50000" step="0.01" required>
-      </div>
-
-      <div class="form-group">
-        <label>Expenses (₱)</label>
-        <input type="number" id="sellExpenses" placeholder="e.g. 0" step="0.01" value="0">
-      </div>
-
-      <div class="modal-footer" style="margin-top: 10px;">
-        <button type="button" class="btn-logout" onclick="closeSellModal()">CANCEL</button>
-        <button type="submit" class="time-filter-btn active" style="font-weight: 700;">CONFIRM SALE</button>
-      </div>
-    </form>
-  </div>
-</div>
 
     </div>
   </div>
 <!-- Toast Notification Container -->
 <div id="toastContainer" class="toast-container"></div>
+
+<script type="module" src="../js/authGuard.js"></script>
+<script type="module" src="../js/logoutModal.js"></script>
 <script type="module" src="../js/analytics.js"></script>
 </body>
 </html>

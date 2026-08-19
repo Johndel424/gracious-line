@@ -1,0 +1,325 @@
+/* ==========================================================================
+   PERFECT MOBILE CENTER & RESPONSIVE FIX
+   ========================================================================== */
+:root {
+  --bg-dark: #121212;
+  --card-bg: rgba(28, 28, 30, 0.85);
+  --gold-primary: #e2b258;
+  --gold-glow: rgba(226, 178, 88, 0.25);
+  --text-main: #ffffff;
+  --text-muted: #9ea0a5;
+  --input-bg: rgba(18, 18, 18, 0.7);
+  --border-color: rgba(226, 178, 88, 0.25);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+html, body {
+  width: 100%;
+  height: 100vh;
+  height: -webkit-fill-available;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  overflow-x: hidden; /* Iwas horizontal scroll */
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Ambient Glows */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb-gold {
+  width: 250px;
+  height: 250px;
+  background: rgba(226, 178, 88, 0.12);
+  top: -50px;
+  left: -50px;
+}
+
+.orb-red {
+  width: 200px;
+  height: 200px;
+  background: rgba(239, 68, 68, 0.08);
+  bottom: -40px;
+  right: -40px;
+}
+
+/* Offline Banner */
+.offline-banner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(239, 68, 68, 0.95);
+  color: #fff;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 99999;
+}
+
+/* Portal Container - Forces Strict Centering & Max Width */
+.portal-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 380px; /* Saktong lapad sa phone at laptop */
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-card {
+  width: 100%; /* Sumusunod sa container size */
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px 20px; /* Reduced side padding para kasya lahat */
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  animation: cardScaleIn 0.4s ease-out;
+}
+
+@keyframes cardScaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Brand Section */
+.brand-section {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-emblem-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  border-radius: 18px;
+  padding: 3px;
+  background: linear-gradient(135deg, #fce09b 0%, #e2b258 50%, #8f6219 100%);
+  box-shadow: 0 8px 20px rgba(226, 178, 88, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emblem-glow-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 22px;
+  border: 1px dashed rgba(226, 178, 88, 0.4);
+  animation: rotateRing 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  display: block;
+}
+
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}
+
+.brand-tagline {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+}
+
+.est-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #e2b258;
+  letter-spacing: 1.5px;
+  padding: 2px 8px;
+  background: rgba(226, 178, 88, 0.1);
+  border: 1px solid rgba(226, 178, 88, 0.25);
+  border-radius: 10px;
+}
+
+/* Form Controls */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #d1d5db;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.forgot-pass-link {
+  font-size: 0.68rem;
+  color: var(--gold-primary);
+  text-decoration: none;
+  white-space: nowrap; /* Tinitiyak na hindi mapuputol ang Forgot? */
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 11px 36px 11px 36px; /* Balance left/right space for icons */
+  background: var(--input-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #fff;
+  font-size: 16px; /* Prevents auto-zoom in iOS Safari */
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-container input::placeholder {
+  color: #666;
+}
+
+.input-container input:focus {
+  border-color: var(--gold-primary);
+  background: rgba(18, 18, 18, 0.95);
+  box-shadow: 0 0 0 2px rgba(226, 178, 88, 0.15);
+}
+
+.eye-toggle-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  padding: 4px;
+}
+
+/* Submit Button */
+.btn-login {
+  margin-top: 4px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #e2b258 0%, #ca9b42 100%);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px var(--gold-glow);
+  transition: all 0.2s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-1px);
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.login-footer {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.login-footer p {
+  font-size: 0.62rem;
+  color: #666;
+}
+
+/* Extra Compact Mobile Heights */
+@media (max-height: 600px) {
+  .logo-emblem-container {
+    width: 65px;
+    height: 65px;
+  }
+  .login-card {
+    padding: 18px 16px;
+  }
+  .auth-form {
+    gap: 10px;
+  }
+}

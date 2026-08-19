@@ -26,6 +26,34 @@ function scrollToTableBottom() {
   }
 }
 
+// 🟢 HELPER: RENDER SKELETON LOADING
+function renderGeremieSkeleton(count = 4) {
+  const tbody = document.getElementById('geremieList');
+  if (!tbody) return;
+
+  const skeletonRowHTML = `
+    <tr class="skeleton-row" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+      <td style="padding: 8px 4px; text-align: center;">
+        <div style="width: 70%; height: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 3px; margin: 0 auto;"></div>
+      </td>
+      <td style="padding: 8px 4px; text-align: center;">
+        <div style="width: 60%; height: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 3px; margin: 0 auto;"></div>
+      </td>
+      <td style="padding: 8px 4px; text-align: center;">
+        <div style="width: 80%; height: 10px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 3px; margin: 0 auto;"></div>
+      </td>
+      <td style="padding: 8px 4px; text-align: center;">
+        <div style="width: 45px; height: 16px; background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: 4px; margin: 0 auto;"></div>
+      </td>
+    </tr>
+  `;
+
+  tbody.innerHTML = skeletonRowHTML.repeat(count);
+}
+
+// Initial display ng skeleton habang nag-aantay
+renderGeremieSkeleton();
+
 // 🔴 1. FIREBASE REALTIME LISTENER
 const geremieRef = ref(db, 'geremie_fund_logs');
 onValue(geremieRef, (snapshot) => {
@@ -101,7 +129,6 @@ export function renderGeremieTable() {
         </tr>`;
 
       batchItems.forEach(item => {
-        const itemId = item.id || item.key;
         html += `
           <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); opacity: 0.75;">
             <td style="padding: 6px 2px; font-size: 0.7rem; color: #aaa; text-align: center;">${safeFormatDate(item.date)}</td>
@@ -157,16 +184,13 @@ window.settleCurrentBatch = function() {
 
   if (!modal) return;
 
-  // Set default date = TODAY (YYYY-MM-DD format)
   const today = new Date().toISOString().split('T')[0];
   dateInput.value = today;
 
-  // Display Total
   totalDisplay.innerText = safeFormatCurrency(currentPendingTotal);
   amountInput.value = currentPendingTotal;
   remainingDisplay.innerText = '₱0';
 
-  // Real-time calculation on typing amount
   amountInput.oninput = () => {
     const entered = Number(amountInput.value) || 0;
     const remaining = currentPendingTotal - entered;
@@ -201,24 +225,20 @@ window.confirmBatchSettle = async function() {
   const updates = {};
 
   if (payAmount >= currentPendingTotal) {
-    // 🟢 BUONG AMOUNT ANG BABAYARAN
     pendingLogs.forEach(item => {
       const itemId = item.id || item.key;
       updates[`geremie_fund_logs/${itemId}/give`] = 'YES';
       updates[`geremie_fund_logs/${itemId}/settledAt`] = settledTimestamp;
     });
   } else {
-    // 🟡 PARTIAL PAYMENT: Mismong babayaran ay gagawing SETTLED, at ang MATITIRA ay magiging BAGONG UNSETTLED LOG
     const remaining = currentPendingTotal - payAmount;
 
-    // Mark ALL existing as YES (na-settle na ang dating batch)
     pendingLogs.forEach(item => {
       const itemId = item.id || item.key;
       updates[`geremie_fund_logs/${itemId}/give`] = 'YES';
       updates[`geremie_fund_logs/${itemId}/settledAt`] = settledTimestamp;
     });
 
-    // Gumawa ng bagong LOG para sa natirang hindi pa nababayaran (Papasok sa next UNSETTLED)
     const newRef = push(ref(db, 'geremie_fund_logs'));
     updates[`geremie_fund_logs/${newRef.key}`] = {
       amount: remaining,
