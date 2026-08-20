@@ -23,7 +23,6 @@ const firebaseConfig = {
   appId: "1:1036801461486:web:36c90e8ddf6b155cca37ff"
 };
 
-
 // Initialize Firebase Services
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -77,7 +76,7 @@ function showMessage(message) {
 }
 
 // ==========================================================================
-// 4. NETWORK & AUTH MONITORING
+// 4. NETWORK & AUTH MONITORING (AUTO-REDIRECT ENABLED)
 // ==========================================================================
 
 // Network Connection Check
@@ -95,12 +94,12 @@ window.addEventListener('online', checkNetworkStatus);
 window.addEventListener('offline', checkNetworkStatus);
 checkNetworkStatus();
 
-// Check if user is already logged in (Session Persistence)
+// Auto-Redirect Engine: Kapag naka-login na at pumasok uli sa login page
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    console.log("Active user session found:", user.uid);
-    // Redirect to Main Dashboard
-    // window.location.href = 'dashboard.html';
+    console.log("Active session detected for UID:", user.uid);
+    // Automatic redirect papuntang Overview Page
+    window.location.href = '../overview/overview.html';
   }
 });
 
@@ -148,7 +147,7 @@ loginForm.addEventListener('submit', async (e) => {
       }));
 
       // Successful Login Redirect
-      window.location.href = 'dashboard.html';
+      window.location.href = '../overview/overview.html';
 
     } else {
       // Fallback if no database profile entry exists
