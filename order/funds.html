@@ -57,6 +57,12 @@
 
       <!-- Page Content -->
       <div class="table-box" style="margin-top: 0;">
+        <input 
+  type="text" 
+  id="fundSearchInput" 
+  placeholder="🔍 Search log details..." 
+  style="padding: 6px 12px; background: #222; border: 1px solid rgba(226, 178, 88, 0.3); color: #fff; border-radius: 8px; font-size: 0.75rem; outline: none; width: 100%; box-sizing: border-box; margin-bottom: 10px;"
+/>
         <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
         <div class="time-filter-group">
           <a href="orders.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Inventory</a>
@@ -74,6 +80,7 @@
         <!-- TABLE CONTAINER -->
         <div id="fundTableContainer" class="table-responsive" style="max-height: 380px; overflow-y: auto; width: 100%; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
           <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
+            
             <thead style="position: sticky; top: 0; background: #121212; z-index: 2;">
               <tr>
                 <th style="width: 30%; padding: 8px 2px; font-size: 0.72rem; text-align: center; color: #aaa;">Date</th>

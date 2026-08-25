@@ -5,6 +5,7 @@ import { ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/1
 let allBusinessFundsCache = [];
 let itemsToShow = 15; // Unang papakita: 15 latest entries
 let isInitialRender = true;
+let searchQuery = ""; // 🔍 NAGO-ORBIT NG SEARCH FILTER
 
 // ==========================================
 // 1. HELPER FUNCTIONS
@@ -51,7 +52,7 @@ window.loadMoreFundLogs = function() {
 };
 
 // ==========================================
-// 3. RENDER TABLE & CALCULATE TOTAL
+// 3. RENDER TABLE & CALCULATE TOTAL (WITH SEARCH FILTER)
 // ==========================================
 function renderBusinessFundTable() {
   const tbody = document.getElementById('businessFundList');
@@ -70,14 +71,31 @@ function renderBusinessFundTable() {
     return;
   }
 
-  // 1. Calculate overall grand total
-  const overallTotal = allBusinessFundsCache.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+  // 🔍 1. FILTERING BY LOG DETAILS
+  const filteredData = allBusinessFundsCache.filter(item => {
+    const detailsText = (item.details || item.log || item.remarks || '').toLowerCase();
+    return detailsText.includes(searchQuery.toLowerCase());
+  });
+
+  if (filteredData.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="3" style="text-align: center; color: #888; padding: 15px; font-size: 0.8rem;">
+          No matching transactions found for "${searchQuery}".
+        </td>
+      </tr>`;
+    if (totalAmountEl) totalAmountEl.innerText = "₱0";
+    return;
+  }
+
+  // 2. Calculate filtered grand total
+  const overallTotal = filteredData.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
   if (totalAmountEl) totalAmountEl.innerText = formatCurrency(overallTotal);
 
-  // 2. Pagination Slicing
-  const totalCount = allBusinessFundsCache.length;
+  // 3. Pagination Slicing
+  const totalCount = filteredData.length;
   const startIndex = Math.max(0, totalCount - itemsToShow);
-  const visibleItems = allBusinessFundsCache.slice(startIndex);
+  const visibleItems = filteredData.slice(startIndex);
 
   let htmlContent = '';
 
@@ -111,7 +129,6 @@ function renderBusinessFundTable() {
       const hasNotes = Array.isArray(item.itemizedNotes) && item.itemizedNotes.length > 0;
       
       if (hasNotes) {
-        const notePreviewText = item.itemizedNotes.map(n => `${n.label}: ₱${n.amount}`).join(', ');
         noteBtnHTML = `
           <button onclick="openFundNoteModal('${itemId}')" style="background: rgba(226, 178, 88, 0.15); border: 1px solid var(--gold-primary, #e2b258); color: var(--gold-primary, #e2b258); padding: 2px 7px; border-radius: 4px; font-size: 0.62rem; font-weight: 700; cursor: pointer; margin-top: 4px; display: inline-flex; align-items: center; gap: 3px;">
             📝 View Breakdown
@@ -136,7 +153,7 @@ function renderBusinessFundTable() {
           ${formatCurrency(amount)}
         </td>
 
-        <!-- Col 3: Details & Notes (Conditional) -->
+        <!-- Col 3: Details & Notes -->
         <td style="width: 35%; padding: 8px 4px; font-size: clamp(0.65rem, 1.8vw, 0.75rem); color: #fff; text-align: center; vertical-align: middle; word-break: break-word;">
           <div>${logDetails}</div>
           ${noteBtnHTML}
@@ -152,20 +169,32 @@ function renderBusinessFundTable() {
     isInitialRender = false;
   }
 }
+
+// 🔍 SEARCH INPUT SETUP
+function setupFundSearch() {
+  const searchInput = document.getElementById('fundSearchInput');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value.trim();
+    renderBusinessFundTable();
+  });
+}
+
+// ==========================================
+// BREAKDOWN NOTE MODAL FUNCTIONS
+// ==========================================
 let currentNoteLogId = null;
 let currentTargetAmount = 0;
 let tempNoteItems = [];
 
-// 1. OPEN MODAL
 export function openFundNoteModal(logId) {
   currentNoteLogId = logId;
   const item = allBusinessFundsCache.find(f => (f.id || f.key) === logId);
   if (!item) return;
 
-  // Kunin ang target amount (kinukuha ang positive value para sa matching)
   currentTargetAmount = Math.abs(Number(item.amount) || 0);
 
-  // Kuhanin ang nakaimbak na items o mag-set ng 1 empty row sa simula
   if (Array.isArray(item.itemizedNotes) && item.itemizedNotes.length > 0) {
     tempNoteItems = JSON.parse(JSON.stringify(item.itemizedNotes));
   } else {
@@ -181,7 +210,6 @@ export function openFundNoteModal(logId) {
   if (modal) modal.style.display = 'flex';
 }
 
-// 2. RENDER Dynamic Input Rows
 function renderNoteItemRows() {
   const container = document.getElementById('noteItemsContainer');
   if (!container) return;
@@ -190,8 +218,6 @@ function renderNoteItemRows() {
   tempNoteItems.forEach((item, index) => {
     html += `
       <div style="display: flex; gap: 2%; align-items: center; width: 100%; box-sizing: border-box; margin-bottom: 6px;">
-        
-        <!-- Column 1: Item Label (40%) -->
         <input 
           type="text" 
           placeholder="Item label" 
@@ -200,7 +226,6 @@ function renderNoteItemRows() {
           style="width: 45%; background: #222; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 5px 6px; border-radius: 6px; font-size: 0.7rem; outline: none; box-sizing: border-box;"
         />
 
-        <!-- Column 2: Amount (40%) -->
         <input 
           type="number" 
           placeholder="Amount" 
@@ -209,7 +234,6 @@ function renderNoteItemRows() {
           style="width: 45%; background: #222; border: 1px solid rgba(255,255,255,0.15); color: #4ade80; padding: 5px 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; outline: none; box-sizing: border-box;"
         />
 
-        <!-- Column 3: Remove Button (10%) -->
         <div style="width: 10%; display: flex; justify-content: center; align-items: center;">
           ${tempNoteItems.length > 1 ? `
             <button type="button" onclick="removeNoteRow(${index})" style="background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; width: 24px; height: 24px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;">
@@ -219,7 +243,6 @@ function renderNoteItemRows() {
             <span style="opacity: 0.2; font-size: 0.65rem; color: #aaa;">—</span>
           `}
         </div>
-
       </div>
     `;
   });
@@ -228,7 +251,6 @@ function renderNoteItemRows() {
   checkNoteTotalValidation();
 }
 
-// 3. ROW MANAGEMENT
 window.addNoteRow = function() {
   tempNoteItems.push({ label: '', amount: '' });
   renderNoteItemRows();
@@ -248,7 +270,6 @@ window.updateNoteItemData = function(index, field, value) {
   checkNoteTotalValidation();
 };
 
-// 4. LIVE TOTAL & VALIDATION CHECKER
 function checkNoteTotalValidation() {
   const currentTotal = tempNoteItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
   const statusEl = document.getElementById('noteTotalStatus');
@@ -278,30 +299,25 @@ function checkNoteTotalValidation() {
   return isValid;
 }
 
-// 5. SAVE TO FIREBASE (Direct sa specific child node ng business_fund_logs)
 export function saveFundNote() {
-  // Clean empty inputs
   const cleanedItems = tempNoteItems.filter(item => item.label.trim() !== '' || Number(item.amount) > 0);
   const currentTotal = cleanedItems.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
-  // STRICT VALIDATION: Pag hindi magkapareho sa click amount, bawal i-save
   if (currentTotal !== currentTargetAmount) {
-  if (typeof showToast === 'function') {
-    showToast(`Cannot save! The total (₱${currentTotal.toLocaleString()}) must match ₱${currentTargetAmount.toLocaleString()}`);
-  } else {
-    alert(`Cannot save!\nThe total (₱${currentTotal.toLocaleString()}) must equal ₱${currentTargetAmount.toLocaleString()}`);
+    if (typeof showToast === 'function') {
+      showToast(`Cannot save! The total (₱${currentTotal.toLocaleString()}) must match ₱${currentTargetAmount.toLocaleString()}`);
+    } else {
+      alert(`Cannot save!\nThe total (₱${currentTotal.toLocaleString()}) must equal ₱${currentTargetAmount.toLocaleString()}`);
+    }
+    return;
   }
-  return;
-}
 
   if (!currentNoteLogId) return;
 
-  // 🔴 DITO PAPASOK SA SPECIFIC NODE NA CLINICK UNDER 'business_fund_logs'
   const targetNodeRef = ref(db, `business_fund_logs/${currentNoteLogId}`);
 
   update(targetNodeRef, { itemizedNotes: cleanedItems })
     .then(() => {
-      // Update local cache
       const item = allBusinessFundsCache.find(f => (f.id || f.key) === currentNoteLogId);
       if (item) item.itemizedNotes = cleanedItems;
 
@@ -315,50 +331,36 @@ export function saveFundNote() {
     });
 }
 
-// CLOSE MODAL
 export function closeFundNoteModal() {
   const modal = document.getElementById('fundNoteModal');
   if (modal) modal.style.display = 'none';
   currentNoteLogId = null;
 }
 
-// Window Bindings
 window.openFundNoteModal = openFundNoteModal;
 window.closeFundNoteModal = closeFundNoteModal;
 window.saveFundNote = saveFundNote;
+
 // ==========================================
-// ELEGANT SKELETON LOADING HELPER
+// SKELETON LOADING
 // ==========================================
 function showAnalyticsLoading() {
   const tbody = document.getElementById('businessFundList');
   if (!tbody) return;
 
-  // Nagre-render ng 5 skeleton rows para punan ang table habang nag-aantay
   let skeletonRows = '';
   for (let i = 0; i < 5; i++) {
     skeletonRows += `
       <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
-        <td style="padding: 10px 4px; text-align: center;">
-          <span class="skeleton-box" style="width: 80%;"></span>
-        </td>
-        <td style="padding: 10px 4px; text-align: center;">
-          <span class="skeleton-box" style="width: 60%;"></span>
-        </td>
-        <td style="padding: 10px 4px; text-align: center;">
-          <span class="skeleton-box" style="width: 60%;"></span>
-        </td>
-        <td style="padding: 10px 4px; text-align: center;">
-          <span class="skeleton-box" style="width: 70%;"></span>
-        </td>
-        <td style="padding: 10px 4px; text-align: center;">
-          <span class="skeleton-box" style="width: 50%;"></span>
-        </td>
+        <td style="padding: 10px 4px; text-align: center;"><span class="skeleton-box" style="width: 80%;"></span></td>
+        <td style="padding: 10px 4px; text-align: center;"><span class="skeleton-box" style="width: 60%;"></span></td>
+        <td style="padding: 10px 4px; text-align: center;"><span class="skeleton-box" style="width: 70%;"></span></td>
       </tr>
     `;
   }
-
   tbody.innerHTML = skeletonRows;
 }
+
 // ==========================================
 // 4. FIREBASE REAL-TIME LISTENER
 // ==========================================
@@ -379,7 +381,6 @@ export function loadBusinessFunds() {
       ...data[key]
     }));
 
-    // SORTING: OLDEST AT TOP (0) -> LATEST AT BOTTOM (End)
     allBusinessFundsCache.sort((a, b) => new Date(a.date || a.createdAt) - new Date(b.date || b.createdAt));
 
     isInitialRender = true;
@@ -416,11 +417,10 @@ function setupAddFundForm() {
   const chkPositive = document.getElementById('fundIsPositive');
   const chkNegative = document.getElementById('fundIsNegative');
 
-  // Toggle behavior: Siguraduhing isa lang ang pwedeng mai-check
   if (chkPositive && chkNegative) {
     chkPositive.addEventListener('change', () => {
       if (chkPositive.checked) chkNegative.checked = false;
-      else chkNegative.checked = true; // Fallback para laging may napili
+      else chkNegative.checked = true;
     });
 
     chkNegative.addEventListener('change', () => {
@@ -441,10 +441,8 @@ function setupAddFundForm() {
       return;
     }
 
-    // Siguraduhing positive muna ang kinuhang number
     amountVal = Math.abs(amountVal);
 
-    // Kapag naka-check ang Negative, imumultiply sa -1 para maging negative
     const isNegative = chkNegative ? chkNegative.checked : true;
     if (isNegative) {
       amountVal = -amountVal;
@@ -462,7 +460,6 @@ function setupAddFundForm() {
       window.closeAddFundModal();
       form.reset();
 
-      // I-reset pabalik sa DEFAULT (Negative = checked, Positive = unchecked)
       if (chkNegative) chkNegative.checked = true;
       if (chkPositive) chkPositive.checked = false;
 
@@ -472,10 +469,12 @@ function setupAddFundForm() {
     }
   });
 }
+
 // ==========================================
 // 6. INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   loadBusinessFunds();
   setupAddFundForm();
+  setupFundSearch(); // 🔍 INILAGAY DITO ANG LISTENER
 });
