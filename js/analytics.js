@@ -211,10 +211,14 @@ function renderAnalyticsTable() {
   }
 
   let htmlContent = '';
-
+  let totalProfit = 0; // 🟢 VARIABLE PARA SA TOTAL PROFIT
   filteredKeys.forEach((key) => {
     const item = productsDataStore[key];
     const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
+    // 🟢 ISAMA SA TOTAL ANG PROFIT KUNG MERON
+    if (item.profit) {
+      totalProfit += Number(item.profit) || 0;
+    }
     const statusBadge = item.status === "Sold" 
       ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
       : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
@@ -249,6 +253,20 @@ function renderAnalyticsTable() {
   });
 
   analyticsListContainer.innerHTML = htmlContent;
+  // 🟢 UPDATE SA FOOTER PARA SA TOTAL PROFIT
+  const footerEl = document.getElementById('analyticsTotalFooter');
+  if (footerEl) {
+    footerEl.innerHTML = `
+      <tr style="background: rgba(0, 0, 0, 0.4); border-top: 2px solid var(--gold-primary, #e2b258); font-weight: 700;">
+        <td colspan="3" style="padding: 8px 4px; text-align: right; color: #fff; font-size: clamp(0.7rem, 2.2vw, 0.85rem);">
+          TOTAL PROFIT:
+        </td>
+        <td style="padding: 8px 2px; text-align: center; color: #4ade80; font-size: clamp(0.72rem, 2.3vw, 0.88rem); white-space: nowrap;">
+          ₱${totalProfit.toLocaleString()}
+        </td>
+      </tr>
+    `;
+  }
 }
 // Function para tawagin kapag nagpalit ng Month Filter sa UI
 function filterAnalyticsByMonth(monthValue) {

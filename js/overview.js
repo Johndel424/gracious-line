@@ -57,7 +57,39 @@ function getYearMonthString(rawDate) {
   if (isNaN(d.getTime())) return "";
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
+// Function para i-populate ang Datalist Suggestions
+export function loadProductNameSuggestions() {
+  const datalist = document.getElementById('productNameList');
+  if (!datalist) return;
 
+  const productsRef = ref(db, 'products');
+
+  onValue(productsRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      datalist.innerHTML = '';
+      return;
+    }
+
+    const data = snapshot.val();
+    
+    // Kuhanin ang lahat ng productName at tanggalin ang mga duplicate (Unique values only)
+    const productNames = Object.values(data)
+      .map(item => item.productName || item.name || item.prodName)
+      .filter(Boolean); // Tanggalin ang mga null/undefined
+
+    const uniqueProductNames = [...new Set(productNames)];
+
+    // I-render sa HTML bilang <option>
+    datalist.innerHTML = uniqueProductNames
+      .map(name => `<option value="${name}"></option>`)
+      .join('');
+  });
+}
+
+// I-call ang load function sa DOMContentLoaded o kapag binubuksan ang Modal
+document.addEventListener("DOMContentLoaded", () => {
+  loadProductNameSuggestions();
+});
 // ==========================================
 // 1. MODAL FUNCTIONS
 // ==========================================
