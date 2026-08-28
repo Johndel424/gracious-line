@@ -440,7 +440,6 @@ function renderEditableFb(elementId, value) {
     target.innerHTML = `
       <div style="display: flex; gap: 8px; align-items: center;">
         <span onclick="openFbLinkModal('${value}')" style="color: var(--gold-primary, #e2b258); text-decoration: underline; font-size: 0.85rem; cursor: pointer;">View Link</span>
-        <span id="btnEditFb" style="color: var(--text-muted); cursor: pointer; font-size: 0.7rem; opacity: 0.7;" title="Edit FB Link">✏️</span>
       </div>`;
   } else {
     target.innerHTML = `
