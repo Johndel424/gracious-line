@@ -62,20 +62,37 @@
         <h3 style="color: var(--gold-primary); margin: 0;">📊SALES ANALYTICS</h3>
         <span style="font-size: 0.75rem; color: var(--text-muted);">Click any item to view full details</span>
       </div>
-      <input 
-        type="month" 
-        id="monthFilterInput"
-        onchange="filterAnalyticsByMonth(this.value)" 
-        style="background: #151515; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px; border-radius: 6px; font-size: 0.8rem;"
-      >
+      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box;">
 
-      <!-- Reset Button -->
-      <button 
-        onclick="document.getElementById('monthFilterInput').value=''; filterAnalyticsByMonth('DEFAULT');" 
-        style="background: transparent; border: 1px solid var(--gold-primary); color: var(--gold-primary); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;"
-      >
-        Clear Filter
-      </button>
+  <!-- ROW 1: Date Picker at Clear Button (Magkatabi) -->
+  <div style="display: flex; align-items: center; gap: 6px; width: 100%;">
+    <!-- Month Date Picker -->
+    <input 
+      type="month" 
+      id="monthFilterInput" 
+      onchange="filterAnalyticsByMonth(this.value)" 
+      style="flex: 1; min-width: 0; background: #151515; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 0.8rem; outline: none; box-sizing: border-box;"
+    />
+
+    <!-- Clear Filter Button -->
+    <button 
+      onclick="document.getElementById('monthFilterInput').value=''; filterAnalyticsByMonth('DEFAULT');" 
+      style="background: transparent; border: 1px solid var(--gold-primary, #e2b258); color: var(--gold-primary, #e2b258); padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; flex-shrink: 0; box-sizing: border-box;"
+    >
+      Clear Filter
+    </button>
+  </div>
+
+  <!-- ROW 2: Search Input (Full Width sa Ibaba) -->
+  <input 
+    type="text" 
+    id="analyticsSearchInput" 
+    placeholder="Search product or buyer..." 
+    oninput="renderAnalyticsTable()" 
+    style="width: 100%; background: #151515; border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 7px 10px; border-radius: 6px; font-size: 0.8rem; outline: none; box-sizing: border-box;"
+  />
+
+</div>
       <!-- Table Container -->
       <div class="table-responsive" style="max-height: 380px; margin-top: 20px; overflow-y: auto; width: 100%;">
         <table style="width: 100%; table-layout: fixed; border-collapse: collapse;">
@@ -88,7 +105,6 @@
             </tr>
           </thead>
           <tbody id="analyticsList">
-            <!-- Dito mai-inject ang htmlContent -->
           </tbody>
           <tfoot id="analyticsTotalFooter"></tfoot>
         </table>

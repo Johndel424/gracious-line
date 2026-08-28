@@ -131,9 +131,6 @@ function getYearMonthString(rawDate) {
   return "";
 }
 
-// ==========================================
-// 2. LOAD & FILTER ANALYTICS DATA
-// ==========================================
 function renderAnalyticsTable() {
   const analyticsListContainer = document.getElementById('analyticsList');
   if (!analyticsListContainer) return;
@@ -146,6 +143,9 @@ function renderAnalyticsTable() {
     return;
   }
 
+  const searchInputElement = document.getElementById('analyticsSearchInput');
+  const searchQuery = searchInputElement ? searchInputElement.value.trim().toLowerCase() : '';
+
   // Kasalukuyang Buwan ngayon (Format: "YYYY-MM")
   const today = new Date();
   const currentYearMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
@@ -154,11 +154,19 @@ function renderAnalyticsTable() {
     const item = productsDataStore[key];
     const itemStatus = item.status || "Available";
 
-    // Kunin ang Purchase Date (uunahin ang datePurchase)
+    // Kunin ang Purchase Date
     const rawPurchaseDate = item.dateSold;
     const itemPurchaseYM = getYearMonthString(rawPurchaseDate);
 
-    // 🔴 1. DEFAULT VIEW (WALA PANG PINILING BUWAN)
+    // 🔍 1. PAG MAY SEARCH QUERY: Hanapin sa Lahat (Product Name o Buyer Name)
+    if (searchQuery !== '') {
+      const productName = (item.productName || '').toLowerCase();
+      const buyerName = (item.buyerName || '').toLowerCase();
+      
+      return productName.includes(searchQuery) || buyerName.includes(searchQuery);
+    }
+
+    // 🔴 2. DEFAULT VIEW (WALANG SEARCH AT WALA PANG PINILING BUWAN)
     if (currentMonthFilter === 'DEFAULT' || !currentMonthFilter) {
       
       // RULE 1: Kapag AVAILABLE -> Pakita palagi (Kahit anong buwan binili)
@@ -174,7 +182,7 @@ function renderAnalyticsTable() {
       return false;
     } 
     
-    // 🔵 2. SPECIFIC MONTH FILTER (PUMILI NG BUWAN ANG USER)
+    // 🔵 3. SPECIFIC MONTH FILTER (PUMILI NG BUWAN ANG USER AT WALANG SEARCH)
     else {
       // Basta tumugma ang Month ng Purchase Date -> IPAKITA (SOLD MAN O AVAILABLE)
       return itemPurchaseYM === currentMonthFilter;
@@ -195,11 +203,16 @@ function renderAnalyticsTable() {
     return 0; // Kung pareho silang Available o parehong Sold, panatilihin ang pagkakaayos
   });
 
-  // Kapag walang tumugma sa filter
+  // Kapag walang tumugma sa filter o search
   if (filteredKeys.length === 0) {
-    const emptyMsg = (currentMonthFilter === 'DEFAULT' || !currentMonthFilter)
-      ? "No available items or items purchased this month."
-      : `No items found for month (${currentMonthFilter}).`;
+    let emptyMsg = "";
+    if (searchQuery !== '') {
+      emptyMsg = `No items found matching "${searchQuery}".`;
+    } else if (currentMonthFilter === 'DEFAULT' || !currentMonthFilter) {
+      emptyMsg = "No available items or items purchased this month.";
+    } else {
+      emptyMsg = `No items found for month (${currentMonthFilter}).`;
+    }
 
     analyticsListContainer.innerHTML = `
       <tr>
@@ -215,6 +228,7 @@ function renderAnalyticsTable() {
   filteredKeys.forEach((key) => {
     const item = productsDataStore[key];
     const formatCurrency = (val) => (val !== null && val !== undefined && val !== '') ? `₱${Number(val).toLocaleString()}` : '-';
+    
     // 🟢 ISAMA SA TOTAL ANG PROFIT KUNG MERON
     if (item.profit) {
       totalProfit += Number(item.profit) || 0;
@@ -222,6 +236,7 @@ function renderAnalyticsTable() {
     const statusBadge = item.status === "Sold" 
       ? `<span style="background: rgba(74, 222, 128, 0.15); color: #4ade80; padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">SOLD</span>`
       : `<span style="background: rgba(226, 178, 88, 0.15); color: var(--gold-primary); padding: 1px 4px; border-radius: 3px; font-size: clamp(0.55rem, 1.6vw, 0.62rem); font-weight: 700; letter-spacing: 0.3px; display: inline-block; line-height: 1.1;">AVAILABLE</span>`;
+    
     htmlContent += `
       <tr style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);" onclick="openProductDetailModal('${key}')">
         <!-- COL 1: Product Name & Badge (40% Width) -->
@@ -253,6 +268,7 @@ function renderAnalyticsTable() {
   });
 
   analyticsListContainer.innerHTML = htmlContent;
+  
   // 🟢 UPDATE SA FOOTER PARA SA TOTAL PROFIT
   const footerEl = document.getElementById('analyticsTotalFooter');
   if (footerEl) {
@@ -268,6 +284,7 @@ function renderAnalyticsTable() {
     `;
   }
 }
+window.renderAnalyticsTable = renderAnalyticsTable;
 // Function para tawagin kapag nagpalit ng Month Filter sa UI
 function filterAnalyticsByMonth(monthValue) {
   currentMonthFilter = monthValue || 'DEFAULT';
