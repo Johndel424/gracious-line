@@ -55,17 +55,26 @@
       </div>
 
       <!-- Page Content -->
-      <div class="table-box" style="margin-top: 0;">
-        <h3 style="font-size: 0.85rem; color: var(--gold-primary); margin-bottom: 12px;">ALL ORDERS MANAGEMENT</h3>
-        <div class="time-filter-group">
+      <div class="time-filter-group">
           <a href="orders.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Inventory</a>
           
-          <a href="funds.html" class="time-filter-btn " style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a>
+          <!-- <a href="funds.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Funds</a> -->
+           <select 
+            onchange="if(this.value) location.href = this.value;" 
+            class="time-filter-btn active" 
+            style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); background: #151515; color: #fff; border: 1px solid var(--gold-primary, #e2b258); border-radius: 6px; outline: none; cursor: pointer;"
+          >
+            <!-- Option para sa Funds -->
+            <option value="funds.html">Business</option>
+            
+            <!-- Idagdag dito ang iba pang HTML pages na gustong papuntahan -->
+            <option value="geremoney.html" selected>Geremie</option>
+            <option value="johndel.html">Johndel</option>
+          </select>
           
           <a href="paluwal.html" class="time-filter-btn" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Paluwal</a>
           
-          <a href="geremoney.html" class="time-filter-btn active" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px 2px; font-size: clamp(0.62rem, 1.8vw, 0.78rem); word-break: break-word;">Geremie</a>
-        </div>
+         </div>
 
       
 

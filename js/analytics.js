@@ -380,37 +380,37 @@ function renderEditableText(elementId, value, fieldName, placeholder) {
   //       click here
   //     </span>`;
   // }
-// Minimalist + Text Truncation Rule
-if (hasValue) {
-  // Sanitize value para sa safe inline onclick string
-  const safeValue = String(value).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  // Minimalist + Text Truncation Rule
+  if (hasValue) {
+    // Sanitize value para sa safe inline onclick string
+    const safeValue = String(value).replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-  target.innerHTML = `
-    <div style="display: flex; align-items: center; justify-content: space-between; max-width: 100%; overflow: hidden;">
-      <span style="color: #fff; cursor: pointer; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="${safeValue} (Click to edit)">
-        ${value}
-      </span>
-      
-      <div style="display: flex; align-items: center; gap: 6px; margin-left: 6px; flex-shrink: 0;">
-        <!-- COPY ICON -->
-        <small 
-          onclick="event.stopPropagation(); navigator.clipboard.writeText('${safeValue}'); this.textContent='✅'; setTimeout(() => this.textContent='📋', 1200);" 
-          style="color: var(--gold-primary, #e2b258); font-size: 0.75rem; cursor: pointer; opacity: 0.8; transition: opacity 0.2s;" 
-          title="Copy"
-          onmouseover="this.style.opacity='1'"
-          onmouseout="this.style.opacity='0.8'"
-        >📋</small>
+    target.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; max-width: 100%; overflow: hidden;">
+        <span style="color: #fff; cursor: pointer; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="${safeValue} (Click to edit)">
+          ${value}
+        </span>
+        
+        <div style="display: flex; align-items: center; gap: 6px; margin-left: 6px; flex-shrink: 0;">
+          <!-- COPY ICON -->
+          <small 
+            onclick="event.stopPropagation(); navigator.clipboard.writeText('${safeValue}'); this.textContent='✅'; setTimeout(() => this.textContent='📋', 1200);" 
+            style="color: var(--gold-primary, #e2b258); font-size: 0.75rem; cursor: pointer; opacity: 0.8; transition: opacity 0.2s;" 
+            title="Copy"
+            onmouseover="this.style.opacity='1'"
+            onmouseout="this.style.opacity='0.8'"
+          >📋</small>
 
-        <!-- EDIT ICON -->
-        <small style="color: var(--gold-primary, #e2b258); font-size: 0.7rem; opacity: 0.6; cursor: pointer;" title="Edit">✏️</small>
-      </div>
-    </div>`;
-} else {
-  target.innerHTML = `
-    <span style="color: var(--gold-primary, #e2b258); cursor: pointer; font-size: 0.75rem; text-decoration: underline; opacity: 0.85;">
-      click here
-    </span>`;
-}
+          <!-- EDIT ICON -->
+          <small style="color: var(--gold-primary, #e2b258); font-size: 0.7rem; opacity: 0.6; cursor: pointer;" title="Edit">✏️</small>
+        </div>
+      </div>`;
+  } else {
+    target.innerHTML = `
+      <span style="color: var(--gold-primary, #e2b258); cursor: pointer; font-size: 0.75rem; text-decoration: underline; opacity: 0.85;">
+        click here
+      </span>`;
+  }
   target.onclick = (e) => {
     e.stopPropagation();
     if (target.querySelector('input')) return;
@@ -671,6 +671,15 @@ async function handleSellSubmit(e) {
     await push(fundRef, {
       date: selectedSellDate, // <-- Gagamitin din ang piniling date dito
       amount: businessShare,
+      details: `Profit for ${prodName}`,
+      give: 'Not yet'
+    });
+  }
+  if (businessShare > 0) {
+    const fundRef = ref(db, 'johndel_fund_logs');
+    await push(fundRef, {
+      date: selectedSellDate, // <-- Gagamitin din ang piniling date dito
+      amount: businessShare + clickyShare,
       details: `Profit for ${prodName}`,
       give: 'Not yet'
     });
