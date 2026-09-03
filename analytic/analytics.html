@@ -52,7 +52,7 @@
         <div class="time-filter-group">
           <a href="../overview/overview.html" class="time-filter-btn">Overview</a>
           <a href="analytics.html" class="time-filter-btn active">Analytics</a>
-          <a href="../order/orders.html" class="time-filter-btn">Orders</a>
+          <a href="../order/funds.html" class="time-filter-btn">Orders</a>
         </div>
       </div>
 
@@ -187,7 +187,15 @@
           <!-- Modal Actions (Slim Buttons) -->
           <div class="modal-footer" style="margin-top: 10px; display: flex; gap: 6px;">
             <button type="button" class="btn-logout" style="background: #dc2626; border-color: #ef4444; color: #fff; padding: 6px 10px; font-size: 0.75rem;" onclick="handleDeleteProduct()">🗑️ DELETE</button>
-            <button type="button" id="btnMarkAsSold" class="time-filter-btn active" style="font-weight: 700; flex: 1; padding: 6px 10px; font-size: 0.75rem;" onclick="openSellModal()">🏷️ MARK AS SOLD</button>
+            <button 
+              type="button" 
+              id="btnMarkAsSold" 
+              class="time-filter-btn active" 
+              style="font-weight: 700; flex: 1; padding: 6px 10px; font-size: 0.75rem;" 
+              onclick="this.disabled = true; openSellModal(); setTimeout(() => { this.disabled = false; }, 1000);"
+            >
+              🏷️ MARK AS SOLD
+            </button>
             <button type="button" class="btn-logout" style="padding: 6px 10px; font-size: 0.75rem;" onclick="closeProductDetailModal()">CLOSE</button>
           </div>
         </div>

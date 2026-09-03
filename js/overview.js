@@ -85,7 +85,7 @@ export function loadProductNameSuggestions() {
       .join('');
   });
 }
-
+ 
 // I-call ang load function sa DOMContentLoaded o kapag binubuksan ang Modal
 document.addEventListener("DOMContentLoaded", () => {
   loadProductNameSuggestions();

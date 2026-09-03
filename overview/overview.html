@@ -58,7 +58,7 @@
         <div class="time-filter-group">
           <a href="overview.html" class="time-filter-btn active">Overview</a>
           <a href="../analytic/analytics.html" class="time-filter-btn">Analytics</a>
-          <a href="../order/orders.html" class="time-filter-btn">Orders</a>
+          <a href="../order/funds.html" class="time-filter-btn">Orders</a>
         </div>
       </div>
 
@@ -192,7 +192,7 @@
       <span class="modal-close" onclick="closeAddProductModal()">&times;</span>
     </div>
     
-    <form id="addProductForm" onsubmit="handleProductSubmit(event)" class="modal-body">
+<form id="addProductForm" onsubmit="handleProductSubmit(event)" class="modal-body">
   <div class="form-group">
     <label>Date Added</label>
     <input type="date" id="prodDate" required>
@@ -214,7 +214,15 @@
 
   <div class="modal-footer">
     <button type="button" class="btn-logout" onclick="closeAddProductModal()">CANCEL</button>
-    <button type="submit" class="time-filter-btn active" style="font-weight: 700;">SAVE PRODUCT</button>
+    <button 
+    type="submit" 
+    id="saveProductBtn"
+    class="time-filter-btn active" 
+    style="font-weight: 700;"
+    onclick="setTimeout(() => { this.disabled = true; this.innerHTML = 'SAVING...'; }, 0);"
+  >
+    SAVE PRODUCT
+  </button>
   </div>
 </form>
   </div>
