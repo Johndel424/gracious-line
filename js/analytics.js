@@ -736,3 +736,133 @@ window.closeFbLinkModal = closeFbLinkModal;
 window.copyFbLinkFromModal = copyFbLinkFromModal;
 
 document.addEventListener('DOMContentLoaded', loadAnalyticsData);
+
+let salesChartInstance = null;
+
+function openSalesGraphModal() {
+  const modal = document.getElementById('salesGraphModal');
+  if (modal) modal.style.display = 'flex';
+
+  renderSalesGraph();
+}
+
+function closeSalesGraphModal() {
+  const modal = document.getElementById('salesGraphModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function renderSalesGraph() {
+  if (!productsDataStore) return;
+
+  const today = new Date();
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+  const salesDataMap = {};
+
+  Object.keys(productsDataStore).forEach((key) => {
+    const item = productsDataStore[key];
+    const isSold = (item.status === 'Sold');
+    const rawDate = item.dateSold || item.datePurchase;
+
+    if (isSold && rawDate) {
+      const itemDate = new Date(rawDate);
+      
+      if (itemDate >= threeMonthsAgo && itemDate <= today) {
+        // Local Time para eksakto ang date
+        const year = itemDate.getFullYear();
+        const month = String(itemDate.getMonth() + 1).padStart(2, '0');
+        const day = String(itemDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+        
+        if (!salesDataMap[dateKey]) {
+          salesDataMap[dateKey] = { count: 0, profit: 0 };
+        }
+        
+        salesDataMap[dateKey].count += 1; 
+        salesDataMap[dateKey].profit += (Number(item.profit) || 0);
+      }
+    }
+  });
+
+  const sortedDates = Object.keys(salesDataMap).sort();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  
+  const labels = [];
+  const dataCounts = [];
+  const dataProfits = [];
+
+  sortedDates.forEach(dateStr => {
+    const [y, m, d] = dateStr.split('-');
+    const formattedDate = `${monthNames[parseInt(m) - 1]} ${parseInt(d)}`; 
+    
+    labels.push(formattedDate);
+    dataCounts.push(salesDataMap[dateStr].count);
+    dataProfits.push(salesDataMap[dateStr].profit);
+  });
+
+  const ctx = document.getElementById('salesChartCanvas').getContext('2d');
+
+  if (salesChartInstance) {
+    salesChartInstance.destroy();
+  }
+
+  // 🔴 COMPACT HEIGHT: Binabaan mula 30px ginawang 18px kada row para hindi sobrang haba
+  const minHeight = Math.max(180, labels.length * 18);
+  document.getElementById('salesChartCanvas').parentElement.style.height = minHeight + 'px';
+
+  salesChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels.length > 0 ? labels : ['No Sales Yet'],
+      datasets: [{
+        label: 'Items Sold',
+        data: dataCounts.length > 0 ? dataCounts : [0],
+        backgroundColor: '#e2b258',
+        borderRadius: 3,
+        barThickness: 8 // 🔴 MAS NIPIS AT COMPACT NA BARS
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const idx = context.dataIndex;
+              const count = dataCounts[idx] || 0;
+              const profit = dataProfits[idx] || 0;
+              return ` Sold: ${count} | Profit: ₱${profit.toLocaleString()}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { 
+          ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 9 }, stepSize: 1 }, 
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          title: {
+            display: true,
+            text: 'Number of sell unit per day (Count)',
+            color: 'var(--gold-primary)',
+            font: { size: 9, weight: 'bold' }
+          }
+        },
+        y: { 
+          ticks: { 
+            color: 'rgba(255,255,255,0.9)', 
+            font: { size: 9 }, // 🔴 MALIIT NA FONT PARA COMPACT TINGNAN
+            autoSkip: false 
+          }, 
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+// Expose the modal functions to window so inline onclick handlers can call them
+window.openSalesGraphModal = openSalesGraphModal;
+window.closeSalesGraphModal = closeSalesGraphModal;
