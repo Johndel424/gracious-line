@@ -178,8 +178,64 @@
         <!-- Dynamic Month X-Axis Labels -->
         <div id="chartXLabels" class="chart-labels-x" style="display: flex; justify-content: space-between; margin-top: 10px; color: var(--text-muted, #a0a0a0); font-size: 0.75rem; font-weight: 600;"></div>
         </div>
+      <!-- RECENT TRANSACTION -->
+      <div class="chart-box" style="background: rgba(20, 20, 20, 0.6); border: 1px solid rgba(226, 178, 88, 0.2); border-radius: 12px; padding: 18px;">
+  
+        <!-- Header Layout -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px;">
+          <div>
+            <h3 style="margin: 0; color: #fff; font-size: 1.05rem; letter-spacing: 0.5px;">RECENT TRANSACTIONS</h3>
+            <span id="chartSubtext" style="font-size: 0.72rem; color: var(--text-muted, #a0a0a0);">LATEST SOLD UNITS</span>
+          </div>
+
+          <!-- Dropdown Selector (Compact Auto-Width with Custom Styled Arrow) -->
+          <div style="position: relative; width: fit-content; display: inline-block;">
+            <select 
+              id="recentCountSelect" 
+              onchange="renderRecentTransactions()"
+              style="
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                width: auto;
+                display: inline-block;
+                padding: 5px 26px 5px 10px;
+                font-size: 0.72rem;
+                font-weight: 600;
+                border-radius: 6px;
+                outline: none;
+                cursor: pointer;
+                background: #181818;
+                color: var(--gold-primary, #e2b258);
+                border: 1px solid rgba(226, 178, 88, 0.4);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                transition: all 0.2s ease;
+              "
+            >
+              <option value="5" selected style="background: #181818; color: #fff;">Show 5</option>
+              <option value="8" style="background: #181818; color: #fff;">Show 8</option>
+              <option value="10" style="background: #181818; color: #fff;">Show 10</option>
+            </select>
+            
+            <!-- Custom Gold Down-Arrow Indicator -->
+            <span style="
+              position: absolute;
+              right: 8px;
+              top: 50%;
+              transform: translateY(-50%);
+              pointer-events: none;
+              font-size: 0.6rem;
+              color: var(--gold-primary, #e2b258);
+            ">▼</span>
+          </div>
+        </div>
         
+        <!-- List Container -->
+        <div id="recentTransactionsList" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Auto-generated via JS -->
+        </div>
       </div>
+      
   </div>
 </div>
 <!-- Toast Notification Container -->

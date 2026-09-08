@@ -571,6 +571,104 @@ export function updateDashboardStats() {
   if (topProfitDetailElem) topProfitDetailElem.textContent = `₱${Math.round(highestProfitPerUnit).toLocaleString()} profit / unit`;
 }
 
+
+// 1. Function para makinig sa 'products' node sa Realtime Database
+function listenToProductsTable() {
+  const productsRef = ref(db, 'products');
+
+  onValue(productsRef, (snapshot) => {
+    const data = snapshot.val();
+    
+    if (data) {
+      // I-convert ang Firebase JSON object papuntang Array
+      productsDataStore = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+    } else {
+      productsDataStore = [];
+    }
+
+    // TAWAGIN ANG RENDER FUNCTION
+    renderRecentTransactions();
+
+  }, (error) => {
+    console.error("Error reading Realtime Database:", error);
+  });
+}
+
+// 2. Function para mag-render ng Last 8 Recent Transactions
+function renderRecentTransactions() {
+  const container = document.getElementById('recentTransactionsList');
+  if (!container) return;
+
+  // 🔴 KUNIN ANG PINILING VALUE SA DROPDOWN (DEFAULT = 5)
+  const countSelect = document.getElementById('recentCountSelect');
+  const limitCount = countSelect ? Number(countSelect.value) : 5;
+
+  if (!productsDataStore || productsDataStore.length === 0) {
+    container.innerHTML = `<div style="font-size: 0.72rem; color: #a0a0a0; text-align: center; padding: 10px;">No products available.</div>`;
+    return;
+  }
+
+  // Filter: 'Sold' na may valid dateSold
+  const soldProducts = productsDataStore.filter(item => {
+    const status = String(item.status || '').toLowerCase();
+    const hasDate = item.dateSold || item.date_sold || item.soldDate;
+    return status === 'sold' && hasDate;
+  });
+
+  // Sort: Pinakabago muna
+  soldProducts.sort((a, b) => {
+    const dateA = new Date(a.dateSold || a.date_sold || a.soldDate);
+    const dateB = new Date(b.dateSold || b.date_sold || b.soldDate);
+    return dateB - dateA;
+  });
+
+  // 🔴 DINAMIKONG PAG-LIMIT BATAY SA DROPDOWN (5, 8, o 10)
+  const limitedItems = soldProducts.slice(0, limitCount);
+
+  if (limitedItems.length === 0) {
+    container.innerHTML = `<div style="font-size: 0.72rem; color: #a0a0a0; text-align: center; padding: 10px;">No sold units found.</div>`;
+    return;
+  }
+
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // Render List
+  container.innerHTML = limitedItems.map(item => {
+    const rawDate = item.dateSold || item.date_sold || item.soldDate;
+    const d = new Date(rawDate);
+    const formattedDate = !isNaN(d) ? `${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}` : 'No Date';
+    
+    const productName = item.productName || item.product || item.name || 'Unnamed Product';
+    
+    // Profit Computation
+    let profitVal = Number(item.profit || 0);
+    if (!profitVal && item.sellingPrice && item.capital) {
+      profitVal = Number(item.sellingPrice) - Number(item.capital);
+    }
+    const formattedProfit = profitVal.toLocaleString();
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 8px 10px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.78rem; font-weight: 600; color: #fff;">${productName}</span>
+          <span style="font-size: 0.65rem; color: #a0a0a0;">📅 ${formattedDate}</span>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #4ade80;" title="Profit">+₱${formattedProfit}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Simulan ang listener
+listenToProductsTable();
+
+// Expose sa Window
+window.renderRecentTransactions = renderRecentTransactions;
 // ==========================================
 // 6. WINDOW SCOPE BINDINGS
 // ==========================================
