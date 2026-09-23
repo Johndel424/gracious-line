@@ -190,19 +190,43 @@ function renderAnalyticsTable() {
   });
 
   // 📌 SORTING LOGIC: LAGING NASA TAAS ANG "AVAILABLE", NASA IBABA ANG "SOLD"
-  filteredKeys.sort((a, b) => {
-    const statusA = productsDataStore[a].status || "Available";
-    const statusB = productsDataStore[b].status || "Available";
+  // filteredKeys.sort((a, b) => {
+  //   const statusA = productsDataStore[a].status || "Available";
+  //   const statusB = productsDataStore[b].status || "Available";
 
+  //   if (statusA !== "Sold" && statusB === "Sold") {
+  //     return -1; // Unahin si A (Available)
+  //   }
+  //   if (statusA === "Sold" && statusB !== "Sold") {
+  //     return 1;  // Unahin si B (Available)
+  //   }
+  //   return 0; // Kung pareho silang Available o parehong Sold, panatilihin ang pagkakaayos
+  // });
+  filteredKeys.sort((a, b) => {
+    const itemA = productsDataStore[a] || {};
+    const itemB = productsDataStore[b] || {};
+
+    const statusA = itemA.status || "Available";
+    const statusB = itemB.status || "Available";
+
+    // 1. Unahin ang Available kaysa Sold
     if (statusA !== "Sold" && statusB === "Sold") {
       return -1; // Unahin si A (Available)
     }
     if (statusA === "Sold" && statusB !== "Sold") {
       return 1;  // Unahin si B (Available)
     }
-    return 0; // Kung pareho silang Available o parehong Sold, panatilihin ang pagkakaayos
-  });
 
+    // 2. Kapag PAREHAS na "Sold", i-sort batay sa `dateSold` (Pinakaluma muna, Pinakabago sa dulo)
+    if (statusA === "Sold" && statusB === "Sold") {
+      const dateA = new Date(itemA.dateSold || 0);
+      const dateB = new Date(itemB.dateSold || 0);
+
+      return dateA - dateB; // 🟢 Pinakaluma muna -> Pinakabagong na-sold mapupunta sa dulo
+    }
+
+    return 0; // Kung parehong Available, panatilihin ang kasalukuyang pagkakaayos
+  });
   // Kapag walang tumugma sa filter o search
   if (filteredKeys.length === 0) {
     let emptyMsg = "";
@@ -241,13 +265,24 @@ function renderAnalyticsTable() {
       <tr style="cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05);" onclick="openProductDetailModal('${key}')">
         <!-- COL 1: Product Name & Badge (40% Width) -->
         <td style="width: 40%; padding: 6px 4px; vertical-align: middle; word-break: break-word; overflow-wrap: break-word; white-space: normal;">
-          <div style="font-size: clamp(0.68rem, 2.2vw, 0.8rem); font-weight: 600; color: #fff; line-height: 1.2;">
-            ${item.productName || 'Unnamed Product'}
-          </div>
-          <div style="margin-top: 3px;">
-            ${statusBadge}
-          </div>
-        </td>
+      <div style="font-size: clamp(0.68rem, 2.2vw, 0.8rem); font-weight: 600; color: #fff; line-height: 1.2;">
+        ${item.productName || 'Unnamed Product'}
+      </div>
+      
+      <div style="margin-top: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+        ${statusBadge}${(() => {
+          // Kung 'Sold' ang item at may dateSold, i-render ang petsa sa tabi ng badge
+          if (String(item.status || '').toLowerCase() === 'sold' && item.dateSold) {
+            const d = new Date(item.dateSold);
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const formattedDate = !isNaN(d) ? `${monthNames[d.getMonth()]} ${d.getDate()}` : item.dateSold;
+            
+            return `<span style="font-size: 0.65rem; color: #a0a0a0; font-weight: 500;">• ${formattedDate}</span>`;
+          }
+          return '';
+        })()}
+      </div>
+    </td>
 
         <!-- COL 2: Capital (20% Width) -->
         <td style="width: 20%; padding: 6px 2px; font-size: clamp(0.65rem, 2vw, 0.78rem); vertical-align: middle; text-align: center; white-space: nowrap;">
