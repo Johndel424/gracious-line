@@ -591,6 +591,7 @@ function listenToProductsTable() {
 
     // TAWAGIN ANG RENDER FUNCTION
     renderRecentTransactions();
+    renderWeeklySales();
 
   }, (error) => {
     console.error("Error reading Realtime Database:", error);
@@ -663,7 +664,105 @@ function renderRecentTransactions() {
     `;
   }).join('');
 }
+function renderWeeklySales() {
+  const container = document.getElementById('weeklySalesList');
+  const totalContainer = document.getElementById('weeklySalesTotal');
+  if (!container) return;
 
+  if (!productsDataStore || productsDataStore.length === 0) {
+    container.innerHTML = `<div style="font-size: 0.72rem; color: #a0a0a0; text-align: center; padding: 10px;">Waiting for products data...</div>`;
+    if (totalContainer) totalContainer.textContent = '₱0';
+    return;
+  }
+
+  // 1. Kumuha ng Start (Monday) at End (Sunday) ng kasalukuyang linggo
+  const today = new Date();
+  const dayOfWeek = today.getDay(); // 0 = Sun, 1 = Mon...
+  const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - distanceToMonday);
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
+  // 2. Filter: Mga na-sold ngayong linggo
+  const weeklySoldProducts = productsDataStore.filter(item => {
+    const status = String(item.status || '').toLowerCase();
+    const rawDate = item.dateSold || item.date_sold || item.soldDate;
+    
+    if (status === 'sold' && rawDate) {
+      const itemDate = new Date(rawDate);
+      if (!isNaN(itemDate.getTime())) {
+        return itemDate >= startOfWeek && itemDate <= endOfWeek;
+      }
+    }
+    return false;
+  });
+
+  // 3. COMPUTATION NG TOTAL PROFIT NGAYONG LINGGO
+  const grandTotalProfit = weeklySoldProducts.reduce((sum, item) => {
+    let profitVal = Number(item.profit || 0);
+    if (!profitVal && item.sellingPrice && item.capital) {
+      profitVal = Number(item.sellingPrice) - Number(item.capital);
+    }
+    return sum + profitVal;
+  }, 0);
+
+  // I-update ang Total Header Badge
+  if (totalContainer) {
+    totalContainer.textContent = `+₱${grandTotalProfit.toLocaleString()}`;
+  }
+
+  // 4. Kung walang benta ngayong linggo
+  if (weeklySoldProducts.length === 0) {
+    container.innerHTML = `<div style="font-size: 0.72rem; color: #a0a0a0; text-align: center; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 6px;">No sales recorded for this week. 📉</div>`;
+    return;
+  }
+
+  // 5. Sort: Pinakabago muna
+  weeklySoldProducts.sort((a, b) => {
+    const dateA = new Date(a.dateSold || a.date_sold || a.soldDate);
+    const dateB = new Date(b.dateSold || b.date_sold || b.soldDate);
+    return dateB - dateA;
+  });
+
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]; // 🔴 ARAW NAMES
+
+  // 6. Render List Items
+  container.innerHTML = weeklySoldProducts.map(item => {
+    const rawDate = item.dateSold || item.date_sold || item.soldDate;
+    const d = new Date(rawDate);
+    
+    // 🟢 PAG-FORMAT NG PETSA AT ARAW (halimbawa: "Oct 6 • Tue")
+    const formattedDate = !isNaN(d) ? `${monthNames[d.getMonth()]} ${d.getDate()} • ${dayNames[d.getDay()]}` : 'No Date';
+    const productName = item.productName || item.product || item.name || 'Unnamed Product';
+    
+    let profitVal = Number(item.profit || 0);
+    if (!profitVal && item.sellingPrice && item.capital) {
+      profitVal = Number(item.sellingPrice) - Number(item.capital);
+    }
+
+    return `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 6px; padding: 8px 10px;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <span style="font-size: 0.78rem; font-weight: 600; color: #fff;">${productName}</span>
+          <span style="font-size: 0.65rem; color: #a0a0a0;">📅 ${formattedDate}</span>
+        </div>
+        <div style="text-align: right;">
+          <span style="font-size: 0.78rem; font-weight: 700; color: #4ade80;" title="Profit">+₱${profitVal.toLocaleString()}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+// Expose sa Window
+window.renderWeeklySales = renderWeeklySales;
 // Simulan ang listener
 listenToProductsTable();
 
@@ -677,3 +776,4 @@ window.openAddProductModal = openAddProductModal;
 window.closeAddProductModal = closeAddProductModal;
 window.handleProductSubmit = handleProductSubmit;
 window.renderPerformanceChart = renderPerformanceChart;
+window.renderWeeklySales = renderWeeklySales;
