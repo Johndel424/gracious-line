@@ -439,23 +439,48 @@ function getBaseModelName(fullName) {
   // Return ang malinis na pangalan, o ang orihinal na pangalan kung nabura man lahat
   return clean || fullName;
 }
+
 export function updateDashboardStats() {
   if (!productsDataStore) return;
 
   const today = new Date();
   const currentYM = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const currentDay = today.getDate(); // e.g. 8 (Day 8 ngayon)
 
-  const lastMonthDate = new Date();
-  lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
+  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
   const lastYM = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
 
   let currentMonthProfit = 0;
   let lastMonthProfit = 0;
+  let lastMonthMTDProfit = 0; 
   let soldThisMonthCount = 0;
   let totalAvailableCount = 0;
 
-  // Tracker para sa Top Selling at Most Profitable Products
   const productStats = {}; 
+
+  // Helper para makuha ang malinis na Local Date at Day (Iwas Timezone Shift Issue)
+  const parseLocalDayAndYM = (rawDateStr) => {
+    if (!rawDateStr) return { day: 0, ym: '' };
+    
+    // Kung string na formatted "YYYY-MM-DD" o may "T"
+    const str = String(rawDateStr).split('T')[0];
+    const parts = str.split('-');
+    
+    if (parts.length === 3) {
+      const year = parts[0];
+      const month = parts[1].padStart(2, '0');
+      const day = parseInt(parts[2], 10);
+      return { day, ym: `${year}-${month}` };
+    }
+
+    // Fallback sa Date object kung hindi hyphenated string
+    const d = new Date(rawDateStr);
+    if (isNaN(d.getTime())) return { day: 0, ym: '' };
+    
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return { day: d.getDate(), ym: `${year}-${month}` };
+  };
 
   Object.values(productsDataStore).forEach(item => {
     const status = item.status || "Available";
@@ -468,12 +493,10 @@ export function updateDashboardStats() {
     // 2. PROCESS SOLD ITEMS
     if (status === "Sold") {
       const rawSoldDate = item.dateSold || item.datePurchase || item.dateAdded || "";
-      const soldYM = getYearMonthString(rawSoldDate);
+      const { day: soldDay, ym: soldYM } = parseLocalDayAndYM(rawSoldDate);
       const profit = Number(item.profit) || 0;
       
       const rawName = (item.productName || "Unnamed Product").trim();
-      
-      // 🟢 DITO TAYO NAGBAGO: KUKUHAIN ANG BASE MODEL (WALA NANG SPECS)
       const baseModel = getBaseModelName(rawName);
 
       // A. Kung nabenta ngayong buwan
@@ -485,6 +508,11 @@ export function updateDashboardStats() {
       // B. Kung nabenta noong nakaraang buwan
       if (soldYM === lastYM) {
         lastMonthProfit += profit;
+
+        // 🔴 KASAMA NA ANG BUONG ARAW (<= currentDay, e.g. pati buong Sept 8)
+        if (soldDay > 0 && soldDay <= currentDay) {
+          lastMonthMTDProfit += profit;
+        }
       }
 
       // C. PAG-SAMA-SAMAHIN ANG LAHAT NG VARIANT SA ISANG BASE MODEL
@@ -501,6 +529,7 @@ export function updateDashboardStats() {
   // ==========================================
   const totalSalesElem = document.getElementById('statTotalSales');
   const salesGrowthElem = document.getElementById('statSalesGrowth');
+  const mtdPacingElem = document.getElementById('statMTDPacing'); 
 
   if (totalSalesElem) {
     totalSalesElem.textContent = `₱${currentMonthProfit.toLocaleString()}`;
@@ -522,6 +551,26 @@ export function updateDashboardStats() {
     salesGrowthElem.style.color = isPositive ? '#4ade80' : '#f87171';
   }
 
+  // 🔴 IPAPAKITA ANG ACCURATE AT KUMPLETONG KITA HANGGANG DULO NG PAREHONG ARAW
+  if (mtdPacingElem) {
+    const diffMTD = currentMonthProfit - lastMonthMTDProfit;
+    const isAhead = diffMTD >= 0;
+    const badgeColor = isAhead ? '#4ade80' : '#f87171';
+    const arrow = isAhead ? '▲' : '▼';
+    const statusText = isAhead ? 'ahead' : 'behind';
+
+    mtdPacingElem.innerHTML = `
+      <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.68rem; line-height: 1.4;">
+        <div style="color: #a0a0a0; margin-bottom: 2px;">
+          Last Month (Day 1-${currentDay}): <strong style="color: #fff;">₱${lastMonthMTDProfit.toLocaleString()}</strong>
+        </div>
+        <div style="color: ${badgeColor}; font-weight: 600;">
+          ${arrow} ₱${Math.abs(diffMTD).toLocaleString()} ${statusText} vs last month same date
+        </div>
+      </div>
+    `;
+  }
+
   // ==========================================
   // UPDATE CARD 2: ORDERS OVERVIEW
   // ==========================================
@@ -538,33 +587,29 @@ export function updateDashboardStats() {
   let topVolumeCount = 0;
 
   let topProfitProduct = "None Yet";
-  let highestProfitPerUnit = 0; // Kikitain KADA ISANG PIRASO (Avg Profit Per Unit)
+  let highestProfitPerUnit = 0; 
 
   Object.keys(productStats).forEach(model => {
     const totalUnits = productStats[model].count;
     const totalProfit = productStats[model].totalProfit;
-    const avgProfitPerUnit = totalProfit / totalUnits; // Profit bawat unit!
+    const avgProfitPerUnit = totalProfit / totalUnits; 
 
-    // 1. Top Volume (Sino ang may PINAKAMARAMING NABENTA)
     if (totalUnits > topVolumeCount) {
       topVolumeCount = totalUnits;
       topVolumeProduct = model;
     }
 
-    // 2. Most Profitable (Sino ang PINAKAMALAKI ANG KITA KADA PIRASO)
     if (avgProfitPerUnit > highestProfitPerUnit) {
       highestProfitPerUnit = avgProfitPerUnit;
       topProfitProduct = model;
     }
   });
 
-  // Set Top Volume UI
   const topProdElem = document.getElementById('statTopProduct');
   const topProdDetailElem = document.getElementById('statTopProductDetail');
   if (topProdElem) topProdElem.textContent = topVolumeProduct;
   if (topProdDetailElem) topProdDetailElem.textContent = `${topVolumeCount} unit(s) sold`;
 
-  // Set Top Profit UI (Ipakita ang Average Profit bawat unit)
   const topProfitElem = document.getElementById('statTopProfitProduct');
   const topProfitDetailElem = document.getElementById('statTopProfitDetail');
   if (topProfitElem) topProfitElem.textContent = topProfitProduct;
